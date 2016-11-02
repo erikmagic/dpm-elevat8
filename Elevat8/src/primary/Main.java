@@ -1,5 +1,14 @@
 package primary;
 
+import lejos.hardware.Brick;
+import lejos.hardware.BrickFinder;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.port.MotorPort;
+import lejos.hardware.port.Port;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.remote.ev3.RemoteEV3;
+import lejos.robotics.RegulatedMotor;
 
 /**
  * @author Erik-Olivier Riendeau, 2016
@@ -10,15 +19,38 @@ package primary;
  */
 public class Main {
 
-	// --------------------------------------- fields --------------------------------- //
+	
 	
 	/**
 	 * @param args 
-	 * Main method that executs directly in the EV3
+	 * Main method that executes directly in the EV3
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		// sets motor to according ports
+		RegulatedMotor left = new EV3LargeRegulatedMotor(MotorPort.B);
+		RegulatedMotor right = new EV3LargeRegulatedMotor(MotorPort.C);
+		RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
+		RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+		
+		// set up sensors to ports
+		Brick brick = BrickFinder.getDefault();
+	    Port s4 = brick.getPort("S4");
+	    Port s3 = brick.getPort("S3");
+	    Port s2 = brick.getPort("S2");
+	    Port s1 = brick.getPort("S1");
+	    EV3ColorSensor colorSensorRight = new EV3ColorSensor(s4);
+	    EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3);
+	    EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);
+	    EV3UltrasonicSensor usFront = new EV3UltrasonicSensor(s1);
+	    
+		// https://sourceforge.net/p/lejos/wiki/Remote%20access%20to%20an%20EV3/
+		// https://lejosnews.wordpress.com/2015/02/11/pan-configuration/ to add a sensor from another brick
+		
+	    // set up the display
+	    
+	    
+	    
+		
 	}
 	
 	/**
