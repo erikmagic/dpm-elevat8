@@ -22,7 +22,7 @@ public class USSensor extends Thread  {
 	private Object lock;
 	float[] sensorData;
 	private ArrayList<Integer> hold_data, filter_list;
-	private int sensorSize, hold_data_size = 200, filter_list_size = 5, distance, answer, temp;
+	private int sensorSize, hold_data_size = 400, filter_list_size = 5, distance, answer, temp;
 	
 	
 	/**
@@ -56,15 +56,15 @@ public class USSensor extends Thread  {
 			// fetch data from sensor sensor
 			sensorProvider.fetchSample(sensorData, 0);
 			distance = (int)sensorData[0];
-			
+			/* filter implementation
 			// if the list reaches the end, keep last elements as new elements and clear the rest
-			if (hold_data.size() == 199){
+			if (hold_data.size() == 200){
 				// keeps the 10 first element of the list ( old's last elements)
 				for (int i = 0; i < 10; i++){
 					hold_data.set(i, hold_data.get(i+190));
 				}
 				// clear the rest
-				for(int i = 10; i < 199; i++){
+				for(int i = 10; i < 200; i++){
 					hold_data.remove(i);
 				}
 			}
@@ -75,6 +75,7 @@ public class USSensor extends Thread  {
 					distance = filter(hold_data, hold_data.size()-2); // always two element late for the filter to work
 				}
 			}
+			*/
 			
 		}
 		
@@ -102,7 +103,7 @@ public class USSensor extends Thread  {
 		sort_list(filter_list);
 		
 		// replace the distance value by the median of the list
-		answer = filter_list.get(filter_list_size/2);
+		answer = filter_list.get(2);
 		
 		// clears the list
 		filter_list.clear();

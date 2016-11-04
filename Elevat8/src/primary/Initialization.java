@@ -88,6 +88,7 @@ public class Initialization {
 	public Initialization(){
 		
 	}
+	
 	/**The initialize method simply starts the methods getWIFI, startThreads and initializeObjects
 	 * 
 	 */
@@ -129,7 +130,7 @@ public class Initialization {
 		sideSensor = new USSensor(usSide);
 		frontSensor = new USSensor(usFront);
 		heightSensor = new USSensor(usDetectObject);
-		correctionSensor = new ColorSensor();
+		correctionSensor = new ColorSensor(colorSensor);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
 		capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
