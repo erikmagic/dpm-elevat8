@@ -55,7 +55,7 @@ public class USSensor extends Thread  {
 			
 			// fetch data from sensor sensor
 			sensorProvider.fetchSample(sensorData, 0);
-			distance = (int)sensorData[0];
+			distance = (int)sensorData[0]*100;
 			/* filter implementation
 			// if the list reaches the end, keep last elements as new elements and clear the rest
 			if (hold_data.size() == 200){
