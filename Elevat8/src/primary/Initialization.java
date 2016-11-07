@@ -23,21 +23,21 @@ public class Initialization {
 	// motors fields
 	private RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	private RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
-	private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
-	private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	//private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
+	//private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
 	private Port s4 = brick.getPort("S4");
-	private Port s3 = brick.getPort("S3");
-	private Port s2 = brick.getPort("S2");
+//	private Port s3 = brick.getPort("S3");
+//	private Port s2 = brick.getPort("S2");
 	private Port s1 = brick.getPort("S1");
 	private EV3ColorSensor colorSensor = new EV3ColorSensor(s4);
 	// EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3); to be added if
 	// we get more ports
-	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);
+//	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);
 	private EV3UltrasonicSensor usFront = new EV3UltrasonicSensor(s1);
-	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);
+//	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);
 	// https://sourceforge.net/p/lejos/wiki/Remote%20access%20to%20an%20EV3/
 	// https://lejosnews.wordpress.com/2015/02/11/pan-configuration/ to add a
 	// sensor from another brick
@@ -56,7 +56,6 @@ public class Initialization {
 	
 	// odometer fields
 	private Odometer odo;
-	private OdometerCorrection odoCorrection;
 	
 	// localization fields
 	private Localization loc;
@@ -77,11 +76,11 @@ public class Initialization {
 	private DodgeObject dodgeObject;
 	
 	// numerical value fields
-	private final double TRACKSIZE = 18; // from the middle of the left wheel to the middle of the right wheel
-	private final double WHEELRADIUS = 2.12;
-	private final int ACCELERATION = 4000;
-	private final int FORWARDSPEED = 125;
-	private final int ROTATIONSPEED = 75;
+	public static final double TRACKSIZE = 14.4; // from the middle of the left wheel to the middle of the right wheel
+	public static final double WHEELRADIUS = 2.10;
+	public static  final int ACCELERATION = 4000;
+	public static  final int FORWARDSPEED = 185;
+	public static  final int ROTATIONSPEED = 145;
 	
 	/**Empty constructor
 	 * 
@@ -94,14 +93,11 @@ public class Initialization {
 	 * 
 	 */
 	public void initialize(){
-		// start by getting wifi info to fetch needed parameters for object initializations
 		getWIFI();
-		// initialize objects used troughout the code
 		initializeObjects();
-		// start urgent threads, after initialize objects because some of these threads are objects
 		startThreads();
 		
-		// localize the robot once everything has been set up before
+		// localize the robot once everything has been set up before**************************************
 		loc.localize();
 	}
 
@@ -116,34 +112,33 @@ public class Initialization {
 	 * Starts the TIMER, ODOMETER, USSENSORS, COLORSENSORS AND DISPLAY
 	 */
 	public void startThreads() {
-		custom_timer.startTimer(); // start the actual timer thread
+//		custom_timer.startTimer(); // start the actual timer thread
 		odo.start();
-		sideSensor.start();
+//		sideSensor.start();
 		frontSensor.start();
-		heightSensor.start();
+//		heightSensor.start();
 		
 	}
 
 	/**
-	 * Initializes instances of localization, custom_timer and navigation
+	 * Initializes instances of localization; custom_timer and navigation
 	 */
 	public void initializeObjects() {
 		
 		custom_timer = new CustomTimer(timer, deadline); // initialize timer object
-		odo = new Odometer(leftMotor, rightMotor, TRACKSIZE, WHEELRADIUS);
-		sideSensor = new USSensor(usSide);
+		odo = new Odometer(leftMotor, rightMotor, TRACKSIZE, WHEELRADIUS, 30, true);
+		LCDInfo lcd= new LCDInfo(odo);
+//		sideSensor = new USSensor(usSide);
 		frontSensor = new USSensor(usFront);
-		heightSensor = new USSensor(usDetectObject);
+//		heightSensor = new USSensor(usDetectObject);
 		correctionSensor = new ColorSensor(colorSensor);
-		odoCorrection = new OdometerCorrection(odo, correctionSensor);
-		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
+	//	nav = new Navigation(odo);
 		capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 		gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE
-					, frontSensor, sideSensor, heightSensor, correctionSensor);
+		loc = new Localization(leftMotor, rightMotor, odo, nav, usFront,colorSensor);
 
 	}
 	/** Gets the instance of capture object initialized in the Initialization and Capture thread started in the localization.
