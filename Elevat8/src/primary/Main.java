@@ -10,6 +10,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// calls initialization in order to be able to call non static methods which is not possible in the main
+		
 		Initialization initialize = new Initialization();
 		initialize.initialize();
 	}

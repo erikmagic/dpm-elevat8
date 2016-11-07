@@ -56,6 +56,7 @@ public class Initialization {
 	
 	// odometer fields
 	private Odometer odo;
+	private OdometerCorrection odoCorrection;
 	
 	// localization fields
 	private Localization loc;
@@ -93,9 +94,12 @@ public class Initialization {
 	 * 
 	 */
 	public void initialize(){
+		// start by getting wifi info to fetch needed parameters for object initializations
 		getWIFI();
-		startThreads();
+		// initialize objects used troughout the code
 		initializeObjects();
+		// start urgent threads, after initialize objects because some of these threads are objects
+		startThreads();
 		
 		// localize the robot once everything has been set up before
 		loc.localize();
@@ -131,6 +135,7 @@ public class Initialization {
 		frontSensor = new USSensor(usFront);
 		heightSensor = new USSensor(usDetectObject);
 		correctionSensor = new ColorSensor(colorSensor);
+		odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
 		capture = new Capture(leftMotor, rightMotor, clawMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
