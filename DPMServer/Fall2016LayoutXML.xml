@@ -1,0 +1,28 @@
+<XML>
+	<inputs>
+		<team key="BTN">
+			<label>Builder team number</label>
+		</team>
+		<text key="BSC">
+			<label>Builder team start corner</label>
+		</text>
+		<team key="CTN">
+			<label>Garbage collecter team number</label>
+		</team>
+		<text key="CSC">
+			<label>Garbage collector team start corner</label>
+		</text>
+		<coordinate keyx="LRZx" keyy="LRZy">
+			<label>Red zone lower left corner</label>
+		</coordinate>
+		<coordinate keyx="URZx" keyy="URZy">
+			<label>Red zone upper right corner</label>
+		</coordinate>
+		<coordinate keyx="LGZx" keyy="LGZy">
+			<label>Green zone lower left corner</label>
+		</coordinate>
+		<coordinate keyx="UGZx" keyy="UGZy">
+			<label>Green zone upper right corner</label>
+		</coordinate>
+	</inputs>
+</XML>

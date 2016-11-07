@@ -132,7 +132,7 @@ public class Initialization {
 		heightSensor = new USSensor(usDetectObject);
 		correctionSensor = new ColorSensor(colorSensor);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-		capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		capture = new Capture(leftMotor, rightMotor, clawMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
