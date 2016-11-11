@@ -67,6 +67,8 @@ public class OdometerCorrection extends Thread {
 						odo.setX(lastX + (tile-lastX));
 					}
 				}
+				// make sure the sensor does not detect another line before a certain amount of time
+				try { Thread.sleep(1000); } catch ( InterruptedException e ) {}
 			}
 			counter_corner = 0;
 			

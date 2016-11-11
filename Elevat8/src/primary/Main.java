@@ -13,7 +13,8 @@ public class Main {
 		// calls initialization in order to be able to call non static methods which is not possible in the main
 		
 		Initialization initialize = new Initialization();
-		initialize.initialize();
+		//initialize.initialize();
+		initialize.isolation_test();
 	}
 
 }

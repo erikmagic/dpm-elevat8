@@ -14,7 +14,12 @@ public class Odometer extends Thread {
 	private RegulatedMotor rightMotor, leftMotor;
 	private double trackSize, wheelRadius;
 	private Object lock;
-	private double positionX, positionY, angle;
+	private double positionX = 0, positionY = 0, theta = 0, nowTachoL = 0, nowTachoR = 0, previousTachoL = 0, previousTachoR = 0;
+	private long updateStart, updateEnd;
+	private double displacementLeft, displacementRight, displacement, changeDirection, dX, dY;
+	// odometer update period, in ms
+		private static final long ODOMETER_PERIOD = 25;
+	
 	/**Odometer constructor
 	 * 
 	 * @param leftMotor
@@ -37,6 +42,75 @@ public class Odometer extends Thread {
 	public void run(){
 		while(always_on){
 			// TODO implementation of the odometer
+			
+			// reset the motor tacho meter
+			leftMotor.resetTachoCount();
+			rightMotor.resetTachoCount();
+
+			while (true) {
+				updateStart = System.currentTimeMillis();
+				// put (some of) your odometer code here
+				
+				
+				
+				//System.out.println("left tacho value is " + leftMotor.getTachoCount() +" right tacho value is " 
+				//		+ rightMotor.getTachoCount());
+				
+				// measure the progression of each motor
+				nowTachoL = leftMotor.getTachoCount();
+				nowTachoR = rightMotor.getTachoCount();
+				
+				// compute distance
+				displacementLeft = ((Math.PI)*wheelRadius*(nowTachoL- previousTachoL))/180 ;
+				displacementRight = ((Math.PI)*wheelRadius*(nowTachoR- previousTachoR))/180;
+				
+				// update now tacho reading to previous tacho reading
+				previousTachoL = nowTachoL;
+				previousTachoR = nowTachoR;
+				
+				// compute total displacement
+				displacement = (displacementLeft + displacementRight)/2;
+				
+				// compute change in direction the robot is heading to
+				changeDirection = (displacementLeft-displacementRight)/(trackSize);
+				
+				
+
+				synchronized (lock) {
+					// don't use the variables x, y, or theta anywhere but here!
+					
+					// update theta 
+					theta -= changeDirection;
+					
+					// update dX and dY using cos, sin and theta
+					dX = displacement*Math.cos(theta);
+					dY = displacement*Math.sin(theta);
+					
+					
+					// makes sure that theta is between 0 and 2pi
+					if ( theta > 2*Math.PI) theta -= 2*Math.PI;
+					else if ( theta < 0) theta += 2*Math.PI;
+					
+					// switch default role to
+					
+					// add the displacement to the last position
+					positionX += dX;
+					positionY += dY;
+					
+				}
+
+				// this ensures that the odometer only runs once every period
+				updateEnd = System.currentTimeMillis();
+				if (updateEnd - updateStart < ODOMETER_PERIOD) {
+					try {
+						Thread.sleep(ODOMETER_PERIOD - (updateEnd - updateStart));
+					} catch (InterruptedException e) {
+						// there is nothing to be done here because it is not
+						// expected that the odometer will be interrupted by
+						// another thread
+					}
+				}
+			}
 		}
 	}
 	public double getX(){
@@ -51,9 +125,24 @@ public class Odometer extends Thread {
 	}
 	public double getAngle(){
 		synchronized(lock){
-			return angle;
+			return theta * 180/Math.PI;
 		}
 	}
+	public void setPosition(double[] position, boolean[] update) {
+		synchronized (lock) {
+			if (update[0]) position[0] = positionX;
+			if (update[1]) position[1] = positionY;
+			if (update[2]) position[2] = theta * 180/Math.PI;
+		}
+	}
+
+	public double[] getPosition() {
+		synchronized (this) {
+			return new double[] { positionX, positionY, theta * 180/Math.PI };
+		}
+	}
+	
+
 	public void setX(double x){
 		positionX = x;
 	}
@@ -61,7 +150,8 @@ public class Odometer extends Thread {
 		positionY = y;
 	}
 	public void setAngle(double ang){
-		angle = angle;
+		theta = ang * 	Math.PI/180;
 	}
+	
 
 }
