@@ -83,6 +83,30 @@ public class Initialization {
 	private final int FORWARDSPEED = 125;
 	private final int ROTATIONSPEED = 75;
 	
+	// WIFI coordinate and data
+	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy;
+	/* RANGES:
+	 * BTN -> [1 - 17]
+	 * BSC -> [1 - 4]
+	 * CTN -> [1 - 17]
+	 * CSC -> [1 - 4]
+	 * LRZx -> [-1 - 10]
+	 * LRZy -> [-1 - 10]
+	 * URZx -> [0 - 11]
+	 * URZy -> [0 - 11]
+	 * LGZx -> [-1 - 10]
+	 * LGZy -> [-1 - 10]
+	 * UGZx -> [0 - 11]
+	 * UGZy -> [0 - 11]
+	 * 
+	 * Assumptions: 
+	 * LRZx < URZx & LGZx < UGZx
+	 * LRZy < URZy & LGZy < UGZy
+	 */
+	
+	// corner coordinates
+	private final int[][] X = {{-1,-1},{10,-1},{10,10},{-1,10}};
+	
 	/**Empty constructor
 	 * 
 	 */
