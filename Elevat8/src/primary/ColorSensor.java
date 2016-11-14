@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 import java.util.ArrayList;
 

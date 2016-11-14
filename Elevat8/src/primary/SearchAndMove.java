@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 import lejos.robotics.RegulatedMotor;
 
@@ -19,7 +19,7 @@ public class SearchAndMove extends Thread {
 	private static volatile boolean complete_stop, thread_on;
 	private static final double MAPSIZE = 120; 
 	private static final float DISTANCE_TOLERANCE = 29, STOP = 0;
-	private static final int DIVISION = 4, SCAN_INTERVAL = 10;
+	private static final int DIVISION = 4, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 6;
 	
 	
 	/**Search and move constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
@@ -53,7 +53,7 @@ public class SearchAndMove extends Thread {
 	/**Runnable instance of the search and move. Can be paused with pauseThread or stopped with stopThread.
 	 * The algorithm cannot feature navigation methods or any methods that take time to complete because
 	 * if it is paused or stopped, the effect needs to be immediate.
-	 * 
+	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
 		while(!complete_stop){
@@ -66,7 +66,7 @@ public class SearchAndMove extends Thread {
 					//TODO: make sure goFoward is not buggy
 				}
 				//TODO: what to do when scan scans something: bridge with wall following or object capturing
-				
+				//BRIDGE with object recognition
 			}
 		}
 	}
@@ -74,87 +74,136 @@ public class SearchAndMove extends Thread {
 	 * returns a boolean which indicates if an object has been detected in the scanning process
 	 */
 	private boolean scanning(){
-		//position of scanned object, the heading followed by the distance detected
-		//-1 heading indicates no object detected
+		/**position of scanned object, {heading, distance at which object was detected
+		 * -1 heading and 255 distance indicates no object detected
+		 */
 		double objectPosition [] = {-1,255};
 		
-		//TODO: update this so it's universal, matter the map size.
-		//TODO: also so that it includes the center CASE 4
-		//TODO: add more comments
+		//TODO: in the future, if code works well etc. clean it up by creating a for function and reduce lines
 		
 		/**the direction which the robot scans varies depending on where the robot is on the map
 		 * 1. On the bottom left corner, it scans 90 degrees from y+ to x+ axis
-		 * 2. On the bottom middle, it scans 180 degrees from y- to x+ axis
+		 * 2. On the bottom middle side, it scans 180 degrees from x- to x+ axis
 		 * 3. On the bottom right corner, it scans 90 degrees from x- to y+ axis
 		 * 4. In the middle, it scans 360 from x+ to x+ axis
 		 * 5. On the top left corner, it scans 90 degrees from x+ to y- axis
-		 * 6. On the top middle corner, it scans 180 degrees from y- to x+ axis
+		 * 6. On the top middle side, it scans 180 degrees from x- to x+ axis
 		 * 7. On the top right corner, it scans 90 degrees from x- to y- axis
+		 * 8. On the right middle side, it scans 180 degrees from y+ to y- axis
+		 * 9. On the left middle side, it scans 180 degrees from y+ to y- axis
 		 */
-		if (odo.getX()<15 && odo.getY()<60){
+		//Tweakable map distance values to fit any map size
+		double outerSquare = MAPSIZE/DIVISION_FORSCAN;
+		
+		//CASE 1 if robot is on the bottom left corner
+		if (odo.getX()<outerSquare && odo.getY()<outerSquare){
 			nav.turnTo(0, true);
 			while (odo.getAng()<90||odo.getAng()>357){
-				//scan rotating left
+				//scan rotating left from 0 to 90 degrees
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-				objectPosition = scanningDataProcessing(objectPosition);
-			}
-			while (odo.getAng()>1&&odo.getAng()<359){
-				nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
 			}
 		}
-		else if (odo.getX()<30 && odo.getY()<60){
+		
+		//CASE 2 if robot is on the bottom middle
+		else if (odo.getX()<MAPSIZE-outerSquare && odo.getY()<outerSquare){
 			nav.turnTo(0, true);
 			while (odo.getAng()<180||odo.getAng()>357){
-				//scan rotating left
+				//scan rotating left from 0 to 180 degrees
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-				objectPosition = scanningDataProcessing(objectPosition);
-			}
-			while (odo.getAng()>1&&odo.getAng()<359){
-				nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
 			}
 		}
-		//other map position scanning
-		else if (odo.getX()>30 && odo.getY()<60){
+		
+		//CASE 3 if robot is on the bottom right 
+		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()<outerSquare){
 			nav.turnTo(180, true);
 			while (odo.getAng()>90){
+				//scan rotating right from 180 to 90 degrees
 				nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-				objectPosition = scanningDataProcessing(objectPosition);
-			}
-			while (odo.getAng()<180){
-				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
 			}
 			
 		}
-		else if (odo.getX()>30 && odo.getY()>60){
+		//case 6 if robot is on the top middle
+				else if (odo.getY()>MAPSIZE-outerSquare){
+					nav.turnTo(180, true);
+					while (odo.getAng()<358){
+						//scan rotating left from 180 to around 0
+						nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+						//compute the position of the object detected if any
+						objectPosition = scanningDataProcessing(objectPosition);
+					}
+				}
+		
+		//CASE 7 if robot is on the top right
+		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()>MAPSIZE-outerSquare){
 			nav.turnTo(270, true);
 			while (odo.getAng()>180){
+				//scan rotating right from 270 to 180 degrees
 				nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
-			}
-			while (odo.getAng()<270){
-				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-				objectPosition = scanningDataProcessing(objectPosition);
-
 			}	
 		}
-		else {
+		//CASE 5 if robot is on the top left 
+		else if (odo.getX()<outerSquare && odo.getY()>MAPSIZE-outerSquare){
 			nav.turnTo(270, true);
 			while (odo.getAng()<358){
+				//scan rotating left from 270 to around 0
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
 
 			}
-			while (odo.getAng()>270){
+		}
+		//CASE 6 if robot is on the top middle
+		else if (odo.getY()>MAPSIZE-outerSquare){
+			nav.turnTo(180, true);
+			while (odo.getAng()<358){
+				//scan rotating left from 180 to around 0
+				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
+				objectPosition = scanningDataProcessing(objectPosition);
+			}
+		}
+		//CASE 8 if the robot is on the right middle
+		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()>outerSquare){
+			nav.turnTo(270, true);
+			while (odo.getAng()>90){
+				//scan rotating right from 270 to around 90
 				nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+				//compute the position of the object detected if any
+				objectPosition = scanningDataProcessing(objectPosition);
+			}
+		}
+		//CASE 9 if the robot is on the left middle
+		else if (odo.getX()<outerSquare && odo.getY()>outerSquare){
+			nav.turnTo(270, true);
+			while (odo.getAng()>90){
+				//scan rotating left from 270 to around 90
+				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
+				objectPosition = scanningDataProcessing(objectPosition);
+			}
+		}
+		//CASE 4 if the robot is in the middle (inner square)
+		else{
+			nav.turnTo(0, true);
+			while (odo.getAng()<357){
+				//rotate 360 degrees from the left
+				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
 				objectPosition = scanningDataProcessing(objectPosition);
 			}
 		}
 		//when scanning is done, check if an object has been detected
 		nav.setSpeeds(STOP, STOP);
 			if (objectPosition[0] != -1){
+				//a header of -1 means that no object has been detected
 				return true;
 			}
 			else{

@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 /**Main is almost empty, all the work is done in Initialization, localization and subsequent called classes.
  * @author Erik-Olivier Riendeau, 2016

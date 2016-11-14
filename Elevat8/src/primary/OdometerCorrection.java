@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 import lejos.hardware.sensor.EV3ColorSensor;
 

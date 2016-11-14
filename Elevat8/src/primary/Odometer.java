@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 /*
  * File: Odometer.java

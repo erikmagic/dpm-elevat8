@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;

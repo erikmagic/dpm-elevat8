@@ -1,4 +1,4 @@
-package primary;
+package src.primary;
 
 //s1 light sensor, s4 front us sensor
 import lejos.hardware.Button;
