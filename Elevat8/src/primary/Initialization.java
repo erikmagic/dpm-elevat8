@@ -145,6 +145,7 @@ public class Initialization {
 		//sideSensor.start();
 		frontSensor.start();
 		//heightSensor.start();
+		searchMove.start();
 		
 	}
 
