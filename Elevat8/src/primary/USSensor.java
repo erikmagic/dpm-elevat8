@@ -55,7 +55,8 @@ public class USSensor extends Thread  {
 			
 			// fetch data from sensor sensor
 			sensorProvider.fetchSample(sensorData, 0);
-			distance = (int)sensorData[0]*100;
+			distance = (int)(sensorData[0]*100);
+			
 			/*
 			// filter implementation
 			// if the list reaches the end, keep last elements as new elements and clear the rest
@@ -135,6 +136,7 @@ public class USSensor extends Thread  {
 	 */
 	public int getValue(){
 		synchronized (lock){
+			Logger.log("Distance : " + Integer.toString(this.distance));
 			return this.distance;
 		}
 	}

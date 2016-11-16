@@ -102,9 +102,10 @@ public class Initialization {
 	}
 	
 	/**The initialize method simply starts the methods getWIFI, startThreads and initializeObjects
+	 * @throws FileNotFoundException 
 	 * 
 	 */
-	public void initialize(){
+	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
 		getWIFI();
 		// initialize objects used troughout the code
@@ -117,7 +118,7 @@ public class Initialization {
 		System.exit(0);
 	}
 	
-	public void isolation_test(){
+	public void isolation_test() throws FileNotFoundException{
 		initializeObjects();
 		startThreads();
 		nav.turnTo(180, true);
@@ -128,7 +129,15 @@ public class Initialization {
 		lejos.hardware.Button.waitForAnyPress();
 		System.exit(0);
 	}
-
+	public void sensor_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+		for (int i = 0; i < 100 ; i++){
+			frontSensor.getValue();	
+		}
+		lejos.hardware.Button.waitForAnyPress();
+		System.exit(0);
+	}
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
@@ -151,16 +160,12 @@ public class Initialization {
 
 	/**
 	 * Initializes instances of localization, custom_timer and navigation
+	 * @throws FileNotFoundException 
 	 */
-	public void initializeObjects() {
+	public void initializeObjects() throws FileNotFoundException {
 		
-		try {
-			Logger.setLogWriter("Navigation_data.txt");
-		} catch (FileNotFoundException e) {
-			System.out.println("error file");
-			e.getMessage();
-			System.out.println(e);
-		} // set up logger
+		Logger.setLogWriter("sensor_data.txt");
+		 // set up logger
 		//custom_timer = new CustomTimer(timer, deadline); // initialize timer object
 		odo = new Odometer(leftMotor, rightMotor, TRACKSIZE, WHEELRADIUS);
 		lcd = new LCDInfo(odo);
