@@ -60,7 +60,7 @@ public class SearchAndMove extends Thread {
 //		while(!complete_stop){
 //			while(thread_on){
 				//while the scanner is not scanning anything
-				while (true){
+				while (scanning()){
 					//depending on where the robot is on the map, it will travel following a certain path please see pathSetter function for detail
 					nav.turnTo(pathSetter(odo.getX(),odo.getY()), true);
 					nav.goForward(SCAN_INTERVAL);
@@ -208,9 +208,14 @@ public class SearchAndMove extends Thread {
 			//a header of -1 means that no object has been detected
 			nav.turnTo(objectPosition[0], true);
 			//turn to heading where obstacle was detected
+			Sound.beep();
+			Sound.beep();
+			Sound.beep();
+
 			return true;
 		}
 		else{
+			Sound.beep();
 			return false;
 		}
 	}

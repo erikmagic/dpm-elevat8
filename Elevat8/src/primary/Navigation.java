@@ -61,7 +61,7 @@ public class Navigation {
 	public void travelTo(double x, double y) {
 		double minAng;
 		while (Math.abs(x - odo.getX()) > CM_ERR || Math.abs(y - odo.getY()) > CM_ERR) {
-			minAng = (Math.atan2(y - odo.getY(), x - odo.getX()));
+			minAng = (Math.atan2(y - odo.getY(), x - odo.getX()))*(180.0/Math.PI);
 			if (minAng < 0)
 				minAng += 360.0;
 			this.turnTo(minAng, false);

@@ -114,7 +114,7 @@ public class Odometer extends Thread {
 		}
 	}
 	public double getX(){
-		synchronized( lock){
+		synchronized(lock){
 			return positionX;
 		}
 	}
@@ -129,10 +129,16 @@ public class Odometer extends Thread {
 		}
 	}
 	public void setPosition(double[] position, boolean[] update) {
-		synchronized (lock) {
-			if (update[0]) position[0] = positionX;
-			if (update[1]) position[1] = positionY;
-			if (update[2]) position[2] = theta * 180/Math.PI;
+		synchronized (lock){
+			if (update[0]){ 
+				positionX = position[0];
+			}
+			if (update[1]){
+				positionY = position[1];
+			}
+			if (update[2]){
+				theta = position[2]*Math.PI/180;
+			}
 		}
 	}
 
