@@ -49,6 +49,7 @@ public class Capture extends Thread {
 			while(thread_on){
 				// algorithm
 				// TODO implement an algorithm to capture a block
+				
 			}
 		}
 	}

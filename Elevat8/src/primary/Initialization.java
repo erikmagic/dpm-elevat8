@@ -94,6 +94,30 @@ public class Initialization {
 	private final int FORWARDSPEED = 185;
 	private final int ROTATIONSPEED = 125;
 	
+	// WIFI data variables
+	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy;
+	/* RANGES:
+	 * BTN -> [1 - 17]
+	 * BSC -> [1 - 4]
+	 * CTN -> [1 - 17]
+	 * CSC -> [1 - 4]
+	 * LRZx -> [-1 - 10]
+	 * LRZy -> [-1 - 10]
+	 * URZx -> [0 - 11]
+	 * URZy -> [0 - 11]
+	 * LGZx -> [-1 - 10]
+	 * LGZy -> [-1 - 10]
+	 * UGZx -> [0 - 11]
+	 * UGZy -> [0 - 11]
+	 * 
+	 * Assumptions: 
+	 * LRZx < URZx & LGZx < UGZx
+	 * LRZy < URZy & LGZy < UGZy
+	 */
+	
+	// corner coordinates
+	private final double[][] X = {{0,0},{304.8,0},{304.8,304.8},{0,304.8}};
+	
 	/**Empty constructor
 	 * 
 	 */
@@ -142,7 +166,8 @@ public class Initialization {
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
 	public void getWIFI() {
-
+		WifiReceiver receiver = new WifiReceiver();
+		receiver.initiateWifi();
 	}
 
 	/**
