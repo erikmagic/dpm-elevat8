@@ -57,21 +57,20 @@ public class SearchAndMove extends Thread {
 	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
-		while(!complete_stop){
-			while(thread_on){
+//		while(!complete_stop){
+//			while(thread_on){
 				//while the scanner is not scanning anything
-				while (!scanning()){
+				while (true){
 					//depending on where the robot is on the map, it will travel following a certain path please see pathSetter function for detail
 					nav.turnTo(pathSetter(odo.getX(),odo.getY()), true);
 					nav.goForward(SCAN_INTERVAL);
 					//TODO: make sure goFoward is not buggy
-					Sound.beep();
 				}
 				
 				//TODO: what to do when scan scans something: bridge with wall following or object capturing
 				//BRIDGE with object recognition
-			}
-		}
+//			}
+//		}
 	}
 	/**Scanning method: scan the environment for obstacles depending on where the robot is on the map
 	 * returns a boolean which indicates if an object has been detected in the scanning process
@@ -97,7 +96,7 @@ public class SearchAndMove extends Thread {
 		 */
 		//Tweakable map distance values to fit any map size
 		double outerSquare = MAPSIZE/DIVISION_FORSCAN;
-		
+
 		//CASE 1 if robot is on the bottom left corner
 		if (odo.getX()<outerSquare && odo.getY()<outerSquare){
 			nav.turnTo(0, true);
@@ -132,15 +131,15 @@ public class SearchAndMove extends Thread {
 			
 		}
 		//case 6 if robot is on the top middle
-				else if (odo.getY()>MAPSIZE-outerSquare){
-					nav.turnTo(180, true);
-					while (odo.getAngle()<358){
-						//scan rotating left from 180 to around 0
-						nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-						//compute the position of the object detected if any
-						objectPosition = scanningDataProcessing(objectPosition);
-					}
-				}
+		else if (odo.getY()>MAPSIZE-outerSquare){
+			nav.turnTo(180, true);
+			while (odo.getAngle()<358){
+				//scan rotating left from 180 to around 0
+				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+				//compute the position of the object detected if any
+				objectPosition = scanningDataProcessing(objectPosition);
+			}
+		}
 		
 		//CASE 7 if robot is on the top right
 		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()>MAPSIZE-outerSquare){
@@ -205,15 +204,15 @@ public class SearchAndMove extends Thread {
 		}
 		//when scanning is done, check if an object has been detected
 		nav.setSpeeds(STOP, STOP);
-			if (objectPosition[0] != -1){
-				//a header of -1 means that no object has been detected
-				nav.turnTo(objectPosition[1], true);
-				//turn to heading where obstacle was detected
-				return true;
-			}
-			else{
-				return false;
-			}
+		if (objectPosition[0] != -1){
+			//a header of -1 means that no object has been detected
+			nav.turnTo(objectPosition[0], true);
+			//turn to heading where obstacle was detected
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	/**Scanner helper method: process the scanned data, check if there has been a closer object scanned and outputs the
 	 * position of previous object or new object
