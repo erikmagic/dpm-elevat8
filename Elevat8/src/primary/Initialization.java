@@ -35,16 +35,17 @@ public class Initialization {
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
 //	private Port s4 = brick.getPort("S4");
-	private Port s3 = brick.getPort("S3");
-	private Port s2 = brick.getPort("S2");
+//	private Port s3 = brick.getPort("S3");
+//	private Port s2 = brick.getPort("S2");
 	//private Port s1 = brick.getPort("S1");
 	private Port usPort = LocalEV3.get().getPort("S1");
-	private Port lightPort = LocalEV3.get().getPort("S4");
-	private EV3ColorSensor colorSensor = new EV3ColorSensor(lightPort);
+//	private Port lightPort = LocalEV3.get().getPort("S4");
+//	private EV3ColorSensor colorSensor = new EV3ColorSensor(lightPort);
 	// EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3); to be added if
+
 	// we get more ports
-	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);//bottom
-	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);//top
+//	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);//bottom
+//	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);//top
 	private EV3UltrasonicSensor usFront =  new EV3UltrasonicSensor(usPort);
 	// https://sourceforge.net/p/lejos/wiki/Remote%20access%20to%20an%20EV3/
 	// https://lejosnews.wordpress.com/2015/02/11/pan-configuration/ to add a
@@ -97,7 +98,7 @@ public class Initialization {
 	private final double WHEELRADIUS = 2.1;
 	private final int ACCELERATION = 500;
 	private final int FORWARDSPEED = 185;
-	private final int ROTATIONSPEED = 185;
+	private final int ROTATIONSPEED = 125;
 	
 	// WIFI data variables
 	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy;
@@ -144,11 +145,9 @@ public class Initialization {
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
-		loc.localize();
-		while(true){
-			searchMove.start();
-			detectObject.start();
-		}
+		//loc.localize();
+		searchMove.start();
+		//detectObject.start();
 		//System.exit(0);
 	}
 	
@@ -199,9 +198,9 @@ public class Initialization {
 	public void startThreads() {
 		//custom_timer.startTimer(); // start the actual timer thread
 		odo.start();
-		sideSensor.start();
+		//sideSensor.start();
 		frontSensor.start();
-		heightSensor.start();		
+		//heightSensor.start();		
 	}
 
 	/**
@@ -217,21 +216,21 @@ public class Initialization {
 		//Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 
 		lcd = new LCDInfo(odo);
-		sideSensor = new USSensor(usSide);
-		heightSensor = new USSensor(usDetectObject);
+		//sideSensor = new USSensor(usSide);
+		//heightSensor = new USSensor(usDetectObject);
 		frontSensor = new USSensor(usFront);
-		correctionSensor = new ColorSensor(colorSensor);
+		//correctionSensor = new ColorSensor(colorSensor);
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
 		//capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 		//gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE
 		//			, frontSensor, sideSensor, heightSensor, correctionSensor);
-		loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
+		//loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
 	}
 	/** Gets the instance of capture object initialized in the Initialization and Capture thread started in the localization.
 	 * Needs to be called after initialize in order to dodge nullPointException. 

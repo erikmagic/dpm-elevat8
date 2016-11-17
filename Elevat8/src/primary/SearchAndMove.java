@@ -255,8 +255,8 @@ public class SearchAndMove extends Thread {
 		//setup a boolean to check if the angle got sorted in the for loop
 		boolean notSorted = true;
 		//this algorithm works with (0,0) being the CORNER of the map, not the on the first squares, correct accordingly
-//		x += 30.48;
-//		y += 30.48;
+		x += 1;
+		y += 1;
 		/**divide the map into squares, DIVISION determines how many square the length of the map is divided into
 		 * increase DIVISION in order to make path more precise
 		 * 1. Robot  travels on the first diagonal (heading 45 degrees)
@@ -265,12 +265,10 @@ public class SearchAndMove extends Thread {
 		 * 4. Then, travels on the left most side of the map downwards (heading 270 degrees)
 		 * 5. If the robot gets lost and is not on path, make it travel to the left if is on the right side of the map, vice versa
 		 */
-//		if (x==0){
-//			Sound.beep();
-//		}
+
 		for (int i = 0; i<DIVISION-1; i++){
 			//Case 1: if the coordinates are on the first diagonal of the map
-			if((i*squareSize <= x && x<(i+1)*squareSize && i*squareSize<=y && y<(i+1)*squareSize)||(x==0 && y==0)){
+			if(i*squareSize <= x && x<(i+1)*squareSize && i*squareSize<=y && y<(i+1)*squareSize){
 				Sound.beep();
 				heading = 45;
 				notSorted = false;
@@ -278,6 +276,7 @@ public class SearchAndMove extends Thread {
 				continue;
 				//TODO: should I also put angles into variables?
 			}
+			
 			//Case 3: if the coordinates are on the second diagonal of the map
 			else if(i*squareSize <= x && x<(i+1)*squareSize && ((DIVISION-2)-i)*squareSize<=y && y<((DIVISION-1)-i)*squareSize){
 				Sound.beep();

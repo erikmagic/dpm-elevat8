@@ -17,6 +17,7 @@ public class DodgeObject extends Thread {
 		private USSensor sideSensor, frontSensor, heightSensor;
 		private static volatile boolean complete_stop;
 		private static volatile boolean thread_on;
+		private static final double BANDCENTER = 30, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 3;
 		
 		/**Dodge object constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 		 * @param leftMotor
@@ -47,58 +48,46 @@ public class DodgeObject extends Thread {
 			while(!complete_stop){
 				while(thread_on){
 					// algorithm
-//						//MY CODE
-//						//compute the error from bandCenter
-//						int distError = bandCenter-distance;
-//						int diff;
-//						
-//						if (Math.abs(distError) <= bandwidth) { // Case 1: Error in bounds, no adjustment
-//							leftMotor.setSpeed(motorStraight);
-//							rightMotor.setSpeed(motorStraight);            
-//							leftMotor.forward();
-//							rightMotor.forward(); 
-//						}
-//						else if (distError > 25) { // Case 2: Really close to wall, reorientate (go backward)
-//							diff=calcProp(distError); // Get correction value and apply
-//							leftMotor.setSpeed(motorStop);
-//							rightMotor.setSpeed(motorStraight+diff);
-//							leftMotor.forward();
-//							rightMotor.backward();
-//						}
-//						else if (distError > 20) { // Case 3: positive error, move away from wall
-//							diff=calcProp(distError); // Get correction value and apply
-//							leftMotor.setSpeed(motorStraight+diff);
-//							rightMotor.setSpeed(motorStraight-diff);
-//							leftMotor.forward(); // Hack - leJOS bug
-//							rightMotor.forward();
-//						}
-//						else if (distError > 0) { // Case 3: Too far from wall, move closer
-//							diff=calcProp(distError); // Get correction value and apply
-//							leftMotor.setSpeed(motorStraight+diff);
-//							rightMotor.setSpeed(motorStraight-diff);
-//							leftMotor.forward(); 
-//							rightMotor.forward();
-//						}
-//						else if (distError < 0) { // Case 3: negative error, move towards wall
-//							diff=calcProp(distError); // Get correction value and apply
-//							leftMotor.setSpeed(motorStraight-diff);
-//							rightMotor.setSpeed(motorStraight+diff);
-//							leftMotor.forward(); // Hack - leJOS bug
-//							rightMotor.forward();
-//						}				
-					// TODO wall following code to dodge a brick
+						//MYCODE
+					//TODO: implement robustness with front sensor dodging
+						double Begheading = odo.getAngle();
+						//perform bangbang
+						bangbang();
+						//sleep a little
+						try {
+							Thread.sleep(4000);
+						} catch (InterruptedException e) {
+						}
+						while(odo.getAngle() > -(Begheading+STOP_ERROR) && odo.getAngle() < -(Begheading-STOP_ERROR)){
+							bangbang();
+						}
+						
 				}
 			}
 		}
-		
-//		int calcProp (int diff) {
-//			int correction;
-//			// PROPORTIONAL: Correction is proportional to magnitude of error
-//			if (diff < 0) diff=-diff;
-//			correction = (int)(PROPCONST *(double)diff);
-//			if (correction >= motorStraight) correction = MAXCORRECTION;
-//			return correction;
-//			}
+		public void bangbang(){
+			double distance = sideSensor.getValue();
+			double distError = BANDCENTER - distance;
+			
+			if (Math.abs(distError) <= BANDWIDTH) { // Within limits, same speed
+				nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
+			}
+
+			else if (distError >0) { // Medium close to the wall, move away faster	
+				leftMotor.setSpeed(FORWARDSPEED);
+				rightMotor.setSpeed(ROTATIONSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
+			}
+			else if (distError <= 0) { //Far from wall, move closer
+				leftMotor.setSpeed(ROTATIONSPEED);
+				rightMotor.setSpeed(FORWARDSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
+			}
+		}
 		/**Pause the thread by deactivating the inner loop
 		 * 
 		 */
