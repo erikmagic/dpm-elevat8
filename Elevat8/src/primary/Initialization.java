@@ -1,6 +1,6 @@
 package primary;
 
-import java.awt.Button;
+import lejos.hardware.Button;
 import java.io.FileNotFoundException;
 import java.util.Timer;
 
@@ -34,17 +34,18 @@ public class Initialization {
 
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
-	private Port s4 = brick.getPort("S4");
-	//private Port s3 = brick.getPort("S3");
-	//private Port s2 = brick.getPort("S2");
+//	private Port s4 = brick.getPort("S4");
+	private Port s3 = brick.getPort("S3");
+	private Port s2 = brick.getPort("S2");
 	//private Port s1 = brick.getPort("S1");
 	private Port usPort = LocalEV3.get().getPort("S1");
-	private EV3ColorSensor colorSensor = new EV3ColorSensor(s4);
+	private Port lightPort = LocalEV3.get().getPort("S4");
+	private EV3ColorSensor colorSensor = new EV3ColorSensor(lightPort);
 	// EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3); to be added if
 	// we get more ports
-	//private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);
+	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);//bottom
+	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);//top
 	private EV3UltrasonicSensor usFront =  new EV3UltrasonicSensor(usPort);
-	//private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);
 	// https://sourceforge.net/p/lejos/wiki/Remote%20access%20to%20an%20EV3/
 	// https://lejosnews.wordpress.com/2015/02/11/pan-configuration/ to add a
 	// sensor from another brick
@@ -84,15 +85,19 @@ public class Initialization {
 	// dodge objects fields
 	private DodgeObject dodgeObject;
 	
+	//button choice
+	int buttonChoice;
+
+	
 	// initialize logger
 	
 	
 	// numerical value fields
-	private final double TRACKSIZE = 16.25;// 14.5 -> not enough, 16 -> not enough, 16.5 -> too much from the middle of the left wheel to the middle of the right wheel
+	private final double TRACKSIZE = 16.35; // 14.5 -> not enough, 16 -> not enough, 16.5 -> too much from the middle of the left wheel to the middle of the right wheel
 	private final double WHEELRADIUS = 2.1;
 	private final int ACCELERATION = 500;
 	private final int FORWARDSPEED = 185;
-	private final int ROTATIONSPEED = 125;
+	private final int ROTATIONSPEED = 185;
 	
 	// WIFI data variables
 	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy;
@@ -139,20 +144,37 @@ public class Initialization {
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
-		//loc.localize();
+		loc.localize();
+		while(true){
+			searchMove.start();
+			detectObject.start();
+		}
 		//System.exit(0);
 	}
 	
 	public void isolation_test() throws FileNotFoundException{
 		initializeObjects();
 		startThreads();
-		nav.turnTo(180, true);
-		nav.turnTo(360, true);
-		nav.turnTo(90, true);
-		nav.turnTo(270, true);
-		nav.turnTo(0, true);
-		lejos.hardware.Button.waitForAnyPress();
-		System.exit(0);
+//		nav.turnTo(180, true);
+//		nav.turnTo(360, true);
+		//TODO: PLEASE DO NOT REMOVE THIS CODE, might be useful later
+		while(true){
+			buttonChoice = Button.waitForAnyPress();
+			while (buttonChoice != Button.ID_LEFT
+				&& buttonChoice != Button.ID_RIGHT);
+			if (buttonChoice == Button.ID_LEFT){
+				odo.setTrack(0.1);
+			}
+			else if (buttonChoice == Button.ID_RIGHT){
+				odo.setTrack(-0.1);
+			}
+			nav.turnTo(90, true);
+			Button.waitForAnyPress();
+			nav.turnTo(0, true);
+		}
+//		nav.turnTo(270, true);
+//		nav.turnTo(0, true);
+		//System.exit(0);
 	}
 	public void sensor_test() throws FileNotFoundException{
 		initializeObjects();
@@ -176,12 +198,10 @@ public class Initialization {
 	 */
 	public void startThreads() {
 		//custom_timer.startTimer(); // start the actual timer thread
-		//odo.start();
-		//sideSensor.start();
+		odo.start();
+		sideSensor.start();
 		frontSensor.start();
-		//heightSensor.start();
-		searchMove.start();
-		
+		heightSensor.start();		
 	}
 
 	/**
@@ -197,16 +217,16 @@ public class Initialization {
 		//Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
 
 		lcd = new LCDInfo(odo);
-		//sideSensor = new USSensor(usSide);
+		sideSensor = new USSensor(usSide);
+		heightSensor = new USSensor(usDetectObject);
 		frontSensor = new USSensor(usFront);
-		//heightSensor = new USSensor(usDetectObject);
 		correctionSensor = new ColorSensor(colorSensor);
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
 		//capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 		//gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE

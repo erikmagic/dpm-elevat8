@@ -146,8 +146,19 @@ public class Odometer extends Thread {
 			return new double[] { positionX, positionY, theta * 180/Math.PI };
 		}
 	}
+	//FOR TESTING
+	public double getTrack(){
+		synchronized(this){
+			return trackSize;
+		}
+	}
 	
-
+	public void setTrack (double added){
+		synchronized(this){
+			trackSize += added;
+		}
+	}
+//TESTING END
 	public void setX(double x){
 		positionX = x;
 	}

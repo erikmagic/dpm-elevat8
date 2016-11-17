@@ -141,12 +141,12 @@ public class Navigation {
 		else
 			this.rightMotor.forward();
 	}
-	
-	private static int convertDistance(double radius, double distance) {
-		// ( distance / radius) * (180 / PI) in degrees
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius,  width * angle );
+	public void turnBy(double angle, boolean stop){
+
+		if(this.odo.getAngle()+angle > 0){
+		turnTo(this.odo.getAngle()+angle, stop);}
+		else{
+			turnTo(360+(this.odo.getAngle()+angle), stop);
+		}
 	}
 }

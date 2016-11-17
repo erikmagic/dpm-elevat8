@@ -18,9 +18,9 @@ public class SearchAndMove extends Thread {
 	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop, thread_on;
-	private static final double MAPSIZE = 120; 
+	private static final double MAPSIZE = 182.88; 
 	private static final float DISTANCE_TOLERANCE = 29;
-	private static final int DIVISION = 4, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 3, STOP = 0;
+	private static final int DIVISION = 6, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 3, STOP = 0;
 	
 	
 	/**Search and move constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
@@ -57,11 +57,14 @@ public class SearchAndMove extends Thread {
 	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
-//		while(!complete_stop){
-//			while(thread_on){
+		while(!complete_stop){
+			while(thread_on){
 				//while the scanner is not scanning anything
 				while (!scanning()){
 					//depending on where the robot is on the map, it will travel following a certain path please see pathSetter function for detail
+//					if (odo.getY() == 0){
+//						Sound.beep();
+//					}
 					nav.turnTo(pathSetter(odo.getX(),odo.getY()), true);
 					nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
 					try {
@@ -73,8 +76,8 @@ public class SearchAndMove extends Thread {
 				
 				//TODO: what to do when scan scans something: bridge with wall following or object capturing
 				//BRIDGE with object recognition
-//			}
-//		}
+			}
+		}
 	}
 	/**Scanning method: scan the environment for obstacles depending on where the robot is on the map
 	 * returns a boolean which indicates if an object has been detected in the scanning process
@@ -85,11 +88,11 @@ public class SearchAndMove extends Thread {
 		 */
 		double objectPosition [] = {-1,255};
 		//this algorithm considers (0,0) to be at the CORNER of the map, not the first block.
-		double x = odo.getX()+30.48;
-		double y = odo.getY()+30.48;
+		double x = odo.getX();
+		double y = odo.getY();
 
 		//TODO: in the future, if code works well etc. clean it up by creating a for function and reduce lines
-		
+		//TODO: also, maybe base turning on robot's current angle? something like that, save them
 		/**the direction which the robot scans varies depending on where the robot is on the map
 		 * 1. On the bottom left corner, it scans 90 degrees from y+ to x+ axis
 		 * 2. On the bottom middle side, it scans 180 degrees from x- to x+ axis
@@ -252,19 +255,22 @@ public class SearchAndMove extends Thread {
 		//setup a boolean to check if the angle got sorted in the for loop
 		boolean notSorted = true;
 		//this algorithm works with (0,0) being the CORNER of the map, not the on the first squares, correct accordingly
-		x += 30.48;
-		y += 30.48;
+//		x += 30.48;
+//		y += 30.48;
 		/**divide the map into squares, DIVISION determines how many square the length of the map is divided into
 		 * increase DIVISION in order to make path more precise
 		 * 1. Robot  travels on the first diagonal (heading 45 degrees)
 		 * 2. Then, travels on the rightmost side of the map downwards (heading 270 degrees)
 		 * 3. Then, travels on the second diagonal (heading 135 degrees)
 		 * 4. Then, travels on the left most side of the map downwards (heading 270 degrees)
-		 * 5. If the robot gets lost and is not onpath, make it travel to the left if is on the right side of the map, vice versa
+		 * 5. If the robot gets lost and is not on path, make it travel to the left if is on the right side of the map, vice versa
 		 */
-		for (int i=0; i<DIVISION-1; i++){
+//		if (x==0){
+//			Sound.beep();
+//		}
+		for (int i = 0; i<DIVISION-1; i++){
 			//Case 1: if the coordinates are on the first diagonal of the map
-			if(i*squareSize<x && x<(i+1)*squareSize && i*squareSize<y && y<(i+1)*squareSize){
+			if((i*squareSize <= x && x<(i+1)*squareSize && i*squareSize<=y && y<(i+1)*squareSize)||(x==0 && y==0)){
 				Sound.beep();
 				heading = 45;
 				notSorted = false;
@@ -273,7 +279,7 @@ public class SearchAndMove extends Thread {
 				//TODO: should I also put angles into variables?
 			}
 			//Case 3: if the coordinates are on the second diagonal of the map
-			else if(i*squareSize<x && x<(i+1)*squareSize && ((DIVISION-2)-i)*squareSize<y && y<((DIVISION-1)-i)*squareSize){
+			else if(i*squareSize <= x && x<(i+1)*squareSize && ((DIVISION-2)-i)*squareSize<=y && y<((DIVISION-1)-i)*squareSize){
 				Sound.beep();
 				Sound.beep();
 				heading = 135; 
@@ -282,7 +288,7 @@ public class SearchAndMove extends Thread {
 
 			}
 			//Case 2: if the coordinates are on the far right side of the map
-			else if ((DIVISION-1)*squareSize <x && x< DIVISION*squareSize && (i+1)*squareSize<y && y<(i+2)*squareSize){
+			else if ((DIVISION-1)*squareSize <=x && x< DIVISION*squareSize && (i+1)*squareSize<=y && y<(i+2)*squareSize){
 				Sound.beep();
 				Sound.beep();
 				Sound.beep();
@@ -292,7 +298,7 @@ public class SearchAndMove extends Thread {
 
 			}
 			//Case 4: if the coordinates are on the far left side of the map
-			else if (0 <x && x< squareSize && (i+1)*squareSize<y && y<(i+2)*squareSize){
+			else if (0 <=x && x< squareSize && (i+1)*squareSize<=y && y<(i+2)*squareSize){
 				Sound.buzz();
 				heading = 270;
 				notSorted = false;
@@ -301,20 +307,41 @@ public class SearchAndMove extends Thread {
 		}
 			//if it is not sorted, then it is Case 5
 		if (notSorted){
+			//TODO: clean up this code
 			//Case 5: if none of the cases apply, make robot go back to known path
 			//if the robot is on the right part of the map
 			if (x > MAPSIZE/2){
+				//if the robot is on the bottom right
 				Sound.buzz();
 				Sound.buzz();
-
-				heading = 180;
+				if (y <= squareSize){
+					heading = 0;
+				}
+				//if the robot
+				else if (y >= squareSize*(DIVISION-1)){
+					heading = 180;
+				}
+				
+				else {
+					heading = 180;
+				}
 			}
-			//if the robot is on the left part of the map
+			//if the robot is on the middle left part of the map
 			else{
 				Sound.buzz();
 				Sound.buzz();
 				Sound.buzz();
-				heading = 0;
+				if (y <= squareSize){
+					heading = 0;
+				}
+				//if the robot
+				else if (y >= squareSize*(DIVISION-1)){
+					heading = 180;
+				}
+			
+				else{
+					heading = 0;
+				}
 			}
 		}
 		return heading;
