@@ -255,7 +255,8 @@ public class Localization {
 		nav.travelTo(0,0);
 		// turn back to 0 direction
 		try { Thread.sleep(3000); } catch (InterruptedException e){};
-		nav.turnTo(0, true);
+		nav.turnTo(95, true);
+		odo.setPosition(new double [] { 0.0,  0.0, 0.0}, new boolean[] {true, true, true});
 		
 		
 		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
@@ -263,7 +264,7 @@ public class Localization {
 		
 		// when localization is done, start Threads to start actually moving the
 		// robot
-		//startUlteriorThreads();
+		startUlteriorThreads();
 		
 	}
 
@@ -315,4 +316,5 @@ public class Localization {
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
+	
 }

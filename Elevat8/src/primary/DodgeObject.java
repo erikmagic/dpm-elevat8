@@ -52,12 +52,7 @@ public class DodgeObject extends Thread {
 					//TODO: implement robustness with front sensor dodging
 						double Begheading = odo.getAngle();
 						//perform bangbang
-						bangbang();
-						//sleep a little
-						try {
-							Thread.sleep(4000);
-						} catch (InterruptedException e) {
-						}
+				
 						while(odo.getAngle() > -(Begheading+STOP_ERROR) && odo.getAngle() < -(Begheading-STOP_ERROR)){
 							bangbang();
 						}

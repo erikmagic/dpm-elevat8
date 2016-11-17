@@ -19,6 +19,7 @@ public class Main {
 		initialize.initialize();
 		//initialize.sensor_test();
 		//initialize.isolation_test();
+		//initialize.localization_test();
 	}
 
 }
