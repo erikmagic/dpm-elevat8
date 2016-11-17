@@ -131,7 +131,7 @@ public class Initialization {
 	 */
 	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
-		getWIFI();
+		//getWIFI();
 		// initialize objects used troughout the code
 		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
@@ -176,7 +176,7 @@ public class Initialization {
 	 */
 	public void startThreads() {
 		//custom_timer.startTimer(); // start the actual timer thread
-		odo.start();
+		//odo.start();
 		//sideSensor.start();
 		frontSensor.start();
 		//heightSensor.start();
@@ -194,12 +194,15 @@ public class Initialization {
 		 // set up logger
 		//custom_timer = new CustomTimer(timer, deadline); // initialize timer object
 		odo = new Odometer(leftMotor, rightMotor, TRACKSIZE, WHEELRADIUS);
+		//Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
+
 		lcd = new LCDInfo(odo);
 		//sideSensor = new USSensor(usSide);
 		frontSensor = new USSensor(usFront);
 		//heightSensor = new USSensor(usDetectObject);
 		correctionSensor = new ColorSensor(colorSensor);
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
+		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
 		//capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);

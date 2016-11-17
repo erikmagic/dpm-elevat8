@@ -16,7 +16,7 @@ public class Navigation {
 	private Odometer odo;
 	private double WHEELRADIUS, TRACKSIZE;
 	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
-	private final double DEG_MIN_ERR = 3, DEG_MAX_ERR = 357, CM_ERR = 0.3;
+	private final double DEG_MIN_ERR = 3, DEG_MAX_ERR = 357, CM_ERR = 0.3, DEG_ERR = 10;
 	
 	// ----------------------- constructor ----------------------- //
 	/**
@@ -64,7 +64,9 @@ public class Navigation {
 			minAng = (Math.atan2(y - odo.getY(), x - odo.getX()))*(180.0/Math.PI);
 			if (minAng < 0)
 				minAng += 360.0;
-			this.turnTo(minAng, false);
+			if(minAng > DEG_ERR){
+				this.turnTo(minAng, false);
+			}			
 			this.setSpeeds(FORWARDSPEED, FORWARDSPEED);
 			Logger.log(Double.toString(odo.getX()));
 		}

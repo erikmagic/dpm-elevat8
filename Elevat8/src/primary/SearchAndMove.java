@@ -20,7 +20,7 @@ public class SearchAndMove extends Thread {
 	private static volatile boolean complete_stop, thread_on;
 	private static final double MAPSIZE = 120; 
 	private static final float DISTANCE_TOLERANCE = 29;
-	private static final int DIVISION = 4, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 6, STOP = 0;
+	private static final int DIVISION = 4, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 3, STOP = 0;
 	
 	
 	/**Search and move constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
@@ -35,8 +35,8 @@ public class SearchAndMove extends Thread {
 	 * @param frontSensor
 	 * @param heightSensor
 	 */
-	public SearchAndMove(RegulatedMotor leftMotor, RegulatedMotor rightMotor, Navigation nav, Odometer odo, int FORWARDSPEED
-			, int ROTATIONSPEED, int ACCELERATION, USSensor sideSensor, USSensor frontSensor , USSensor heightSensor){ // missing board and zones coordinates
+	public SearchAndMove(RegulatedMotor leftMotor, RegulatedMotor rightMotor, Navigation nav, Odometer odo, int ACCELERATION
+			, int FORWARDSPEED, int ROTATIONSPEED, USSensor sideSensor, USSensor frontSensor , USSensor heightSensor){ // missing board and zones coordinates
 		
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
@@ -60,11 +60,15 @@ public class SearchAndMove extends Thread {
 //		while(!complete_stop){
 //			while(thread_on){
 				//while the scanner is not scanning anything
-				while (scanning()){
+				while (!scanning()){
 					//depending on where the robot is on the map, it will travel following a certain path please see pathSetter function for detail
 					nav.turnTo(pathSetter(odo.getX(),odo.getY()), true);
-					nav.goForward(SCAN_INTERVAL);
-					//TODO: make sure goFoward is not buggy
+					nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+					}
+					nav.setSpeeds(STOP, STOP);					//TODO: make sure goFoward is not buggy
 				}
 				
 				//TODO: what to do when scan scans something: bridge with wall following or object capturing
@@ -80,7 +84,10 @@ public class SearchAndMove extends Thread {
 		 * -1 heading and 255 distance indicates no object detected
 		 */
 		double objectPosition [] = {-1,255};
-		
+		//this algorithm considers (0,0) to be at the CORNER of the map, not the first block.
+		double x = odo.getX()+30.48;
+		double y = odo.getY()+30.48;
+
 		//TODO: in the future, if code works well etc. clean it up by creating a for function and reduce lines
 		
 		/**the direction which the robot scans varies depending on where the robot is on the map
@@ -98,7 +105,7 @@ public class SearchAndMove extends Thread {
 		double outerSquare = MAPSIZE/DIVISION_FORSCAN;
 
 		//CASE 1 if robot is on the bottom left corner
-		if (odo.getX()<outerSquare && odo.getY()<outerSquare){
+		if (x<outerSquare && y<outerSquare){
 			nav.turnTo(0, true);
 			while (odo.getAngle()<90||odo.getAngle()>357){
 				//scan rotating left from 0 to 90 degrees
@@ -109,7 +116,7 @@ public class SearchAndMove extends Thread {
 		}
 		
 		//CASE 2 if robot is on the bottom middle
-		else if (odo.getX()<MAPSIZE-outerSquare && odo.getY()<outerSquare){
+		else if (x<MAPSIZE-outerSquare && y<outerSquare){
 			nav.turnTo(0, true);
 			while (odo.getAngle()<180||odo.getAngle()>357){
 				//scan rotating left from 0 to 180 degrees
@@ -120,7 +127,7 @@ public class SearchAndMove extends Thread {
 		}
 		
 		//CASE 3 if robot is on the bottom right 
-		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()<outerSquare){
+		else if (x>MAPSIZE-outerSquare && y<outerSquare){
 			nav.turnTo(180, true);
 			while (odo.getAngle()>90){
 				//scan rotating right from 180 to 90 degrees
@@ -131,9 +138,9 @@ public class SearchAndMove extends Thread {
 			
 		}
 		//case 6 if robot is on the top middle
-		else if (odo.getY()>MAPSIZE-outerSquare){
+		else if (y>MAPSIZE-outerSquare){
 			nav.turnTo(180, true);
-			while (odo.getAngle()<358){
+			while (odo.getAngle()<357){
 				//scan rotating left from 180 to around 0
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 				//compute the position of the object detected if any
@@ -142,7 +149,7 @@ public class SearchAndMove extends Thread {
 		}
 		
 		//CASE 7 if robot is on the top right
-		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()>MAPSIZE-outerSquare){
+		else if (x>MAPSIZE-outerSquare && y>MAPSIZE-outerSquare){
 			nav.turnTo(270, true);
 			while (odo.getAngle()>180){
 				//scan rotating right from 270 to 180 degrees
@@ -152,9 +159,9 @@ public class SearchAndMove extends Thread {
 			}	
 		}
 		//CASE 5 if robot is on the top left 
-		else if (odo.getX()<outerSquare && odo.getY()>MAPSIZE-outerSquare){
+		else if (x<outerSquare && y>MAPSIZE-outerSquare){
 			nav.turnTo(270, true);
-			while (odo.getAngle()<358){
+			while (odo.getAngle()<357){
 				//scan rotating left from 270 to around 0
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 				//compute the position of the object detected if any
@@ -163,9 +170,9 @@ public class SearchAndMove extends Thread {
 			}
 		}
 		//CASE 6 if robot is on the top middle
-		else if (odo.getY()>MAPSIZE-outerSquare){
+		else if (y>MAPSIZE-outerSquare){
 			nav.turnTo(180, true);
-			while (odo.getAngle()<358){
+			while (odo.getAngle()<357){
 				//scan rotating left from 180 to around 0
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 				//compute the position of the object detected if any
@@ -173,7 +180,7 @@ public class SearchAndMove extends Thread {
 			}
 		}
 		//CASE 8 if the robot is on the right middle
-		else if (odo.getX()>MAPSIZE-outerSquare && odo.getY()>outerSquare){
+		else if (x>MAPSIZE-outerSquare && y>outerSquare){
 			nav.turnTo(270, true);
 			while (odo.getAngle()>90){
 				//scan rotating right from 270 to around 90
@@ -183,7 +190,7 @@ public class SearchAndMove extends Thread {
 			}
 		}
 		//CASE 9 if the robot is on the left middle
-		else if (odo.getX()<outerSquare && odo.getY()>outerSquare){
+		else if (x<outerSquare && y>outerSquare){
 			nav.turnTo(270, true);
 			while (odo.getAngle()>90){
 				//scan rotating left from 270 to around 90
@@ -195,7 +202,7 @@ public class SearchAndMove extends Thread {
 		//CASE 4 if the robot is in the middle (inner square)
 		else{
 			nav.turnTo(0, true);
-			while (odo.getAngle()<357){
+			while (odo.getAngle()<359){
 				//rotate 360 degrees from the left
 				nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 				//compute the position of the object detected if any
@@ -211,11 +218,12 @@ public class SearchAndMove extends Thread {
 			Sound.beep();
 			Sound.beep();
 			Sound.beep();
-
+			Sound.beep();
+			Sound.beep();
 			return true;
 		}
 		else{
-			Sound.beep();
+			//Sound.beep();
 			return false;
 		}
 	}
@@ -241,6 +249,11 @@ public class SearchAndMove extends Thread {
 	private double pathSetter(double x, double y){
 		double squareSize = MAPSIZE/DIVISION;
 		double heading = odo.getAngle();
+		//setup a boolean to check if the angle got sorted in the for loop
+		boolean notSorted = true;
+		//this algorithm works with (0,0) being the CORNER of the map, not the on the first squares, correct accordingly
+		x += 30.48;
+		y += 30.48;
 		/**divide the map into squares, DIVISION determines how many square the length of the map is divided into
 		 * increase DIVISION in order to make path more precise
 		 * 1. Robot  travels on the first diagonal (heading 45 degrees)
@@ -252,28 +265,55 @@ public class SearchAndMove extends Thread {
 		for (int i=0; i<DIVISION-1; i++){
 			//Case 1: if the coordinates are on the first diagonal of the map
 			if(i*squareSize<x && x<(i+1)*squareSize && i*squareSize<y && y<(i+1)*squareSize){
+				Sound.beep();
 				heading = 45;
+				notSorted = false;
+				//continue, don't go through loop again if it go sorted
+				continue;
 				//TODO: should I also put angles into variables?
 			}
 			//Case 3: if the coordinates are on the second diagonal of the map
 			else if(i*squareSize<x && x<(i+1)*squareSize && ((DIVISION-2)-i)*squareSize<y && y<((DIVISION-1)-i)*squareSize){
+				Sound.beep();
+				Sound.beep();
 				heading = 135; 
+				notSorted = false;
+				continue;
+
 			}
 			//Case 2: if the coordinates are on the far right side of the map
 			else if ((DIVISION-1)*squareSize <x && x< DIVISION*squareSize && (i+1)*squareSize<y && y<(i+2)*squareSize){
+				Sound.beep();
+				Sound.beep();
+				Sound.beep();
 				heading = 270;
+				notSorted = false;
+				continue;
+
 			}
 			//Case 4: if the coordinates are on the far left side of the map
 			else if (0 <x && x< squareSize && (i+1)*squareSize<y && y<(i+2)*squareSize){
+				Sound.buzz();
 				heading = 270;
+				notSorted = false;
+				continue;
 			}
+		}
+			//if it is not sorted, then it is Case 5
+		if (notSorted){
 			//Case 5: if none of the cases apply, make robot go back to known path
 			//if the robot is on the right part of the map
-			else if (x > MAPSIZE/2){
+			if (x > MAPSIZE/2){
+				Sound.buzz();
+				Sound.buzz();
+
 				heading = 180;
 			}
 			//if the robot is on the left part of the map
 			else{
+				Sound.buzz();
+				Sound.buzz();
+				Sound.buzz();
 				heading = 0;
 			}
 		}

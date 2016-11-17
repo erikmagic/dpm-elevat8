@@ -88,8 +88,7 @@ public class Odometer extends Thread {
 					
 					
 					// makes sure that theta is between 0 and 2pi
-					if ( theta > 2*Math.PI) theta -= 2*Math.PI;
-					else if ( theta < 0) theta += 2*Math.PI;
+					theta = fixDegAngle(theta);
 					
 					// switch default role to
 					
@@ -158,6 +157,13 @@ public class Odometer extends Thread {
 	public void setAngle(double ang){
 		theta = ang * 	Math.PI/180;
 	}
-	
+	// static 'helper' methods
+	public static double fixDegAngle(double angle) {
+		if (angle < 0.0)
+			angle = 2*Math.PI + (angle % (2*Math.PI));
+
+		return angle % (2*Math.PI);
+	}
+
 
 }

@@ -18,6 +18,7 @@ public class Main {
 		Initialization initialize = new Initialization();
 		initialize.initialize();
 		//initialize.sensor_test();
+		//initialize.isolation_test();
 	}
 
 }
