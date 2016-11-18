@@ -34,7 +34,7 @@ public class Initialization {
 
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
-//	private Port s4 = brick.getPort("S4");
+	//private Port s4 = brick.getPort("S4");
 	private Port s3 = brick.getPort("S3");
 	private Port s2 = brick.getPort("S2");
 	//private Port s1 = brick.getPort("S1");

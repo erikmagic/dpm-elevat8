@@ -53,7 +53,7 @@ public class DodgeObject extends Thread {
 						double Begheading = odo.getAngle();
 						//perform bangbang
 				
-						while(odo.getAngle() > -(Begheading+STOP_ERROR) && odo.getAngle() < -(Begheading-STOP_ERROR)){
+						while(odo.getAngle() > (Begheading+180)%360 + STOP_ERROR || odo.getAngle() < (Begheading+180)%360 - STOP_ERROR){
 							bangbang();
 						}
 						

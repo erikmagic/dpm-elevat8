@@ -67,7 +67,6 @@ public class Localization {
 			DodgeObject dodgeObject, int FORWARDSPEED, int ROTATIONSPEED, int ACCELERATION, double WHEELRADIUS,
 			double TRACKSIZE, USSensor frontSensor, USSensor sideSensor, USSensor heightSensor,
 			ColorSensor correctionSensor) {
-
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.odo = odo;
@@ -120,7 +119,6 @@ public class Localization {
 			leftMotor.forward();
 			rightMotor.backward();
 		}
-
 		// keep rotating until the robot sees a wall, then latch the angle
 		while (frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN) {
 			// turn clockwise
@@ -129,14 +127,12 @@ public class Localization {
 		}
 		Sound.beep();
 		angleA = odo.getAngle();
-
 		// switch direction and wait until it sees no wall
 		while (frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN) {
 			// turn counterclockwise
 			leftMotor.backward();
 			rightMotor.forward();
 		}
-
 		// keep rotating until the robot sees a wall, then latch the angle
 		while (frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN) {
 			// turn counterclockwise
