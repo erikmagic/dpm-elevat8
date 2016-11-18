@@ -11,7 +11,7 @@ import lejos.hardware.lcd.TextLCD;
 
 public class WifiReceiver {
 	
-	private static final String SERVER_IP = "192.168.2.13"; // will change on competition day
+	private static final String SERVER_IP = "192.168.2.19"; // will change on demo/competition day
 	private static final int TEAM_NUMBER = 1;
 
 	private static TextLCD LCD = LocalEV3.get().getTextLCD();
@@ -49,6 +49,29 @@ public class WifiReceiver {
 				Initialization.LGZy = dataMap.get("LGZy"); // [-1 - 10]
 				Initialization.UGZx = dataMap.get("UGZx"); // [0 - 11]
 				Initialization.UGZy = dataMap.get("UGZy"); // [0 - 11]
+				
+				if(Initialization.BTN == TEAM_NUMBER){
+					Initialization.corner = Initialization.BSC;
+					Initialization.zone[0] = Initialization.LGZx;
+					Initialization.zone[1] = Initialization.LGZy;
+					Initialization.zone[2] = Initialization.UGZx;
+					Initialization.zone[3] = Initialization.UGZy;
+					Initialization.opponentZone[0] = Initialization.LRZx;
+					Initialization.opponentZone[1] = Initialization.LRZy;
+					Initialization.opponentZone[2] = Initialization.URZx;
+					Initialization.opponentZone[3] = Initialization.URZy;
+				}
+				else{
+					Initialization.corner = Initialization.CSC;
+					Initialization.zone[0] = Initialization.LRZx;
+					Initialization.zone[1] = Initialization.LRZy;
+					Initialization.zone[2] = Initialization.URZx;
+					Initialization.zone[3] = Initialization.URZy;
+					Initialization.opponentZone[0] = Initialization.LGZx;
+					Initialization.opponentZone[1] = Initialization.LGZy;
+					Initialization.opponentZone[2] = Initialization.UGZx;
+					Initialization.opponentZone[3] = Initialization.UGZy;
+				}
 				System.out.println("Data transfer complete.");
 				System.out.println("Initiate localization...");
 			}
