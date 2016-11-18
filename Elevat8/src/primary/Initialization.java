@@ -101,7 +101,9 @@ public class Initialization {
 	private final int ROTATIONSPEED = 125;
 	
 	// WIFI data variables
-	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy;
+	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy, corner;
+	public static int[] zone = new int[4];
+	public static int[] opponentZone =  new int[4];
 	/* RANGES:
 	 * BTN -> [1 - 17]
 	 * BSC -> [1 - 4]
@@ -122,7 +124,7 @@ public class Initialization {
 	 */
 	
 	// corner coordinates
-	private final double[][] X = {{0,0},{304.8,0},{304.8,304.8},{0,304.8}};
+	private final double[][] X = {{0,0,0},{304.8,0,90},{304.8,304.8,180},{0,304.8,270}};
 	
 	/**Empty constructor
 	 * 
@@ -156,7 +158,7 @@ public class Initialization {
 //		nav.turnTo(180, true);
 //		nav.turnTo(360, true);
 		//TODO: PLEASE DO NOT REMOVE THIS CODE, might be useful later
-		while(true){
+		/*while(true){
 			buttonChoice = Button.waitForAnyPress();
 			while (buttonChoice != Button.ID_LEFT
 				&& buttonChoice != Button.ID_RIGHT);
@@ -169,7 +171,7 @@ public class Initialization {
 			nav.turnTo(90, true);
 			Button.waitForAnyPress();
 			nav.turnTo(0, true);
-		}
+		}*/
 //		nav.turnTo(270, true);
 //		nav.turnTo(0, true);
 		//System.exit(0);
@@ -228,7 +230,7 @@ public class Initialization {
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-		//capture = new Capture(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		//capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
@@ -255,7 +257,7 @@ public class Initialization {
 	 * Needs to be called after initialize in order to dodge nullPointException.
 	 * @return SearchAndMove
 	 */
-	public SearchAndMove getSearchAndMove(){
+	/*public SearchAndMove getSearchAndMove(){
 		try {
 			return searchMove;
 		} catch (NullPointerException e) {
@@ -269,7 +271,7 @@ public class Initialization {
 	 * Needs to be called after initialize in order to dodge nullPointException.
 	 * @return DetectObject
 	 */
-	public DetectObject getdetectObject(){
+	/*public DetectObject getdetectObject(){
 		try {
 			return detectObject;
 		} catch (NullPointerException e) {
@@ -293,7 +295,4 @@ public class Initialization {
 		System.exit(1);
 		return null;
 	}
-
-	
-	
 }

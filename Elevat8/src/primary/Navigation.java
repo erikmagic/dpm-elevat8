@@ -102,7 +102,7 @@ public class Navigation {
 	/**
 	 * Rotates the robot by a desired angle
 	 */
-	/*
+	
 	public void turnBy(double angle, boolean stop){
 		double rotation = (angle + odo.getAngle())%360;
 		if ( angle > 0){
@@ -120,7 +120,7 @@ public class Navigation {
 			this.setSpeeds(0, 0);
 		}
 	}
-	*/
+	
 	public void goForward(double distance) {
 		this.travelTo(Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}
