@@ -31,6 +31,7 @@ public class ColorSensor extends Thread {
 		redMode = colorSensor.getRedMode();
 		sensorSize = redMode.sampleSize();
 		sensorData = new float[sensorSize];
+		lock = new Object();
 	}
 	
 	

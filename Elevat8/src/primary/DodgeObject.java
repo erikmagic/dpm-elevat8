@@ -17,6 +17,7 @@ public class DodgeObject extends Thread {
 		private USSensor sideSensor, frontSensor, heightSensor;
 		private static volatile boolean complete_stop;
 		private static volatile boolean thread_on;
+		private static final double BANDCENTER = 30, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 3;
 		
 		/**Dodge object constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 		 * @param leftMotor
@@ -47,8 +48,39 @@ public class DodgeObject extends Thread {
 			while(!complete_stop){
 				while(thread_on){
 					// algorithm
-					// TODO wall following code to dodge a brick
+						//MYCODE
+					//TODO: implement robustness with front sensor dodging
+						double Begheading = odo.getAngle();
+						//perform bangbang
+				
+						while(odo.getAngle() > -(Begheading+STOP_ERROR) && odo.getAngle() < -(Begheading-STOP_ERROR)){
+							bangbang();
+						}
+						
 				}
+			}
+		}
+		public void bangbang(){
+			double distance = sideSensor.getValue();
+			double distError = BANDCENTER - distance;
+			
+			if (Math.abs(distError) <= BANDWIDTH) { // Within limits, same speed
+				nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
+			}
+
+			else if (distError >0) { // Medium close to the wall, move away faster	
+				leftMotor.setSpeed(FORWARDSPEED);
+				rightMotor.setSpeed(ROTATIONSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
+			}
+			else if (distError <= 0) { //Far from wall, move closer
+				leftMotor.setSpeed(ROTATIONSPEED);
+				rightMotor.setSpeed(FORWARDSPEED);
+				leftMotor.forward();
+				rightMotor.forward();
 			}
 		}
 		/**Pause the thread by deactivating the inner loop
@@ -88,4 +120,6 @@ public class DodgeObject extends Thread {
 			// activate search and move
 			SearchAndMove.resumeThread();
 		}
+		
+		
 }

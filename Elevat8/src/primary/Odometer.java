@@ -88,8 +88,7 @@ public class Odometer extends Thread {
 					
 					
 					// makes sure that theta is between 0 and 2pi
-					if ( theta > 2*Math.PI) theta -= 2*Math.PI;
-					else if ( theta < 0) theta += 2*Math.PI;
+					theta = fixDegAngle(theta);
 					
 					// switch default role to
 					
@@ -114,7 +113,7 @@ public class Odometer extends Thread {
 		}
 	}
 	public double getX(){
-		synchronized( lock){
+		synchronized(lock){
 			return positionX;
 		}
 	}
@@ -129,10 +128,16 @@ public class Odometer extends Thread {
 		}
 	}
 	public void setPosition(double[] position, boolean[] update) {
-		synchronized (lock) {
-			if (update[0]) position[0] = positionX;
-			if (update[1]) position[1] = positionY;
-			if (update[2]) position[2] = theta * 180/Math.PI;
+		synchronized (lock){
+			if (update[0]){ 
+				positionX = position[0];
+			}
+			if (update[1]){
+				positionY = position[1];
+			}
+			if (update[2]){
+				theta = position[2]*Math.PI/180;
+			}
 		}
 	}
 
@@ -141,8 +146,19 @@ public class Odometer extends Thread {
 			return new double[] { positionX, positionY, theta * 180/Math.PI };
 		}
 	}
+	//FOR TESTING
+	public double getTrack(){
+		synchronized(this){
+			return trackSize;
+		}
+	}
 	
-
+	public void setTrack (double added){
+		synchronized(this){
+			trackSize += added;
+		}
+	}
+//TESTING END
 	public void setX(double x){
 		positionX = x;
 	}
@@ -152,6 +168,13 @@ public class Odometer extends Thread {
 	public void setAngle(double ang){
 		theta = ang * 	Math.PI/180;
 	}
-	
+	// static 'helper' methods
+	public static double fixDegAngle(double angle) {
+		if (angle < 0.0)
+			angle = 2*Math.PI + (angle % (2*Math.PI));
+
+		return angle % (2*Math.PI);
+	}
+
 
 }

@@ -1,5 +1,6 @@
 package primary;
 
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.robotics.RegulatedMotor;
 
@@ -30,9 +31,9 @@ public class Localization {
 	
 	private double angleA, angleB, theta, positionX, positionY;
 	private double[] pos = new double[3], angle = new double[4];
-	private final int WALL_DISTANCE = 40, NOISE_MARGIN = 20;//10;
+	private final int WALL_DISTANCE = 40, NOISE_MARGIN = 10;//20;
 	private int countgridlines = 0; 
-	private final double COLORSENSOR_TO_CENTER_TRACK = 11.5;
+	private final double COLORSENSOR_TO_CENTER_TRACK = 9.5;//8.5
 	
 	
 	/**
@@ -109,13 +110,12 @@ public class Localization {
 	 * 
 	 */
 	public void localize() {
-
-		// TODO localization code
+		
 		// perform the ultrasonic localization
 		leftMotor.setSpeed(ROTATIONSPEED);
 		rightMotor.setSpeed(ROTATIONSPEED);
 		// rotate the robot until it sees no wall
-		while (frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN) {
+		/*while (frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN) {
 			// turn clockwise
 			leftMotor.forward();
 			rightMotor.backward();
@@ -142,6 +142,31 @@ public class Localization {
 			// turn counterclockwise
 			leftMotor.backward();
 			rightMotor.forward();
+		}*/
+		while(frontSensor.getValue() > WALL_DISTANCE-NOISE_MARGIN){//30
+			// turn clockwise
+			leftMotor.backward();
+			rightMotor.forward();
+		}
+		Sound.beep();
+		while(frontSensor.getValue() < WALL_DISTANCE+NOISE_MARGIN){//50
+			// turn counterclockwise
+			leftMotor.backward();
+			rightMotor.forward();
+		}
+		Sound.beep();
+		angleA = odo.getAngle();
+		
+		while(frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN){//30
+			// turn clockwise
+			leftMotor.forward();
+			rightMotor.backward();
+		}
+		Sound.beep();
+		while(frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN){//50
+			// turn counterclockwise
+			leftMotor.forward();
+			rightMotor.backward();
 		}
 		Sound.beep();
 		angleB = odo.getAngle();
@@ -153,35 +178,39 @@ public class Localization {
 		theta = computeAngle(angleA, angleB);
 		Sound.buzz();
 		// turn to the 0-axis
-		nav.turnTo(theta, true);
+		nav.turnTo(theta-5, true);
 
 		// update the odometer position (example to follow:)
 		double position[] = {0.0, 0.0, 0.0};
+		
+		//odometer setposition method problem, reverse, odometer line 131;*******************************************************
 		boolean update[] = {true, true, true};
 		odo.setPosition(position, update);
-		
+		try { Thread.sleep(3000); } catch (InterruptedException e){};
 		
 		// start the light localization
 		nav.turnTo(135, true); // turn 135 degrees to make it face to destination ( furthest corner from wall of the tile)
-		odo.setPosition(new double [] { 0.0,  0.0, 135.0 }, new boolean[] {false, false, true});
+		odo.setPosition(new double [] { 0.0,  0.0, 135 }, new boolean[] {false, false, true});
+		//set position wrong odometer line 135, add "* Math.PI/180;"*********************
+		leftMotor.setSpeed(FORWARDSPEED);
+		rightMotor.setSpeed(FORWARDSPEED);
 		
+		leftMotor.rotate(convertDistance(WHEELRADIUS,11),true);
+		rightMotor.rotate(convertDistance(WHEELRADIUS,11),false);
 		// advance the equivalent of one tracksize towards the corner of the tile
-		nav.goForward(TRACKSIZE/3);
+		// nav.goForward(TRACKSIZE/2);
+		// not sure goforward works*********************************************
 		
 		// wait a bit
-		leftMotor.stop();
-		rightMotor.stop();
-		
+		try { Thread.sleep(3000); } catch (InterruptedException e){};
+		//color sensor null pointer exception , color sensor line 64, add this.line 30,add lock = new Object();****************************
 		while (countgridlines < 4)//start counting lines
 		{	
-			
-			
-			
-			pos = odo.getPosition();	//get current posistion from odometer
-			if (correctionSensor.getValue() < 0.27)	//0.27 by trials
+			//get current posistion from odometer**********************getPosition()problem
+			if (correctionSensor.getValue() < 27)	//0.27 by trials
 			{
 				Sound.beep(); 
-				angle[countgridlines] = pos[2];	//store current angle
+				angle[countgridlines] = odo.getAngle();	//store current angle
 				countgridlines++;	//line detected
 				if (countgridlines == 4)	
 				{
@@ -221,14 +250,21 @@ public class Localization {
 		// the x y is according the target origin (0,0)
 		odo.setPosition(new double [] {positionX, positionY, 0}, new boolean [] {true, true, false});	
 		// travel to origin
+		
+		//navigation travelTo method line 64 add * (180.0 / Math.PI);********************************************
 		nav.travelTo(0,0);
 		// turn back to 0 direction
-		nav.turnTo(0, true);
-	
+		try { Thread.sleep(3000); } catch (InterruptedException e){};
+		nav.turnTo(95, true);
+		odo.setPosition(new double [] { 0.0,  0.0, 0.0}, new boolean[] {true, true, true});
+		
+		
+		while (Button.waitForAnyPress() != Button.ID_ESCAPE);
+		System.exit(0);	
 		
 		// when localization is done, start Threads to start actually moving the
 		// robot
-		//startUlteriorThreads();
+		startUlteriorThreads();
 		
 	}
 
@@ -270,5 +306,15 @@ public class Localization {
 			Sound.beep();
 			return theta;
 		}
-}
+	}
+	/**This method converts the motor traval distance to the the angle of 
+	 * how much motor should rotate
+	 * @param radius
+	 * @param distance
+	 * @return the angle motor should ratate
+	 */
+	private static int convertDistance(double radius, double distance) {
+		return (int) ((180.0 * distance) / (Math.PI * radius));
+	}
+	
 }

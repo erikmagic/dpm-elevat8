@@ -16,7 +16,7 @@ public class Navigation {
 	private Odometer odo;
 	private double WHEELRADIUS, TRACKSIZE;
 	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
-	private final double DEG_MIN_ERR = 3, DEG_MAX_ERR = 357, CM_ERR = 0.3;
+	private final double DEG_MIN_ERR = 3, DEG_MAX_ERR = 357, CM_ERR = 0.3, DEG_ERR = 10;
 	
 	// ----------------------- constructor ----------------------- //
 	/**
@@ -61,10 +61,12 @@ public class Navigation {
 	public void travelTo(double x, double y) {
 		double minAng;
 		while (Math.abs(x - odo.getX()) > CM_ERR || Math.abs(y - odo.getY()) > CM_ERR) {
-			minAng = (Math.atan2(y - odo.getY(), x - odo.getX()));
+			minAng = (Math.atan2(y - odo.getY(), x - odo.getX()))*(180.0/Math.PI);
 			if (minAng < 0)
 				minAng += 360.0;
-			this.turnTo(minAng, false);
+			if(minAng > DEG_ERR){
+				this.turnTo(minAng, false);
+			}			
 			this.setSpeeds(FORWARDSPEED, FORWARDSPEED);
 			Logger.log(Double.toString(odo.getX()));
 		}
@@ -139,12 +141,12 @@ public class Navigation {
 		else
 			this.rightMotor.forward();
 	}
-	
-	private static int convertDistance(double radius, double distance) {
-		// ( distance / radius) * (180 / PI) in degrees
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius,  width * angle );
+	public void turnBy(double angle, boolean stop){
+
+		if(this.odo.getAngle()+angle > 0){
+		turnTo(this.odo.getAngle()+angle, stop);}
+		else{
+			turnTo(360+(this.odo.getAngle()+angle), stop);
+		}
 	}
 }
