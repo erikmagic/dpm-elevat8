@@ -53,14 +53,14 @@ public class DetectObject extends Thread {
 	}
 	
 	public void run(){
-		while(!complete_stop){
-			while(thread_on){
+//		while(!complete_stop){
+//			while(thread_on){
 				// algorithm
 				// TODO
 		//move robot forward to a block till the front distance less than certain distance 
 //				try{Thread.sleep(3000);}catch(Exception e){}
 				
-				while(frontSensor.getValue() > 10){
+				while(frontSensor.getValue() > 20){
 					leftMotor.setSpeed(FORWARDSPEED);
 					rightMotor.setSpeed(FORWARDSPEED);
 					
@@ -71,10 +71,13 @@ public class DetectObject extends Thread {
 				rightMotor.stop();
 //				try{Thread.sleep(3000);}catch(Exception e){}
 		//turn the robot cw 90 degrees in order to use side sensors to identify the type of block	
-				nav.turnBy(-120,true);
+				while (sideSensor.getValue() > 20){
+					nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+				}
+				//nav.turnBy(-120,true);
 				
 		//check if nav.turnBy(-100,true) 		
-				try{Thread.sleep(3000);}catch(Exception e){}
+				//try{Thread.sleep(3000);}catch(Exception e){}
 				
 				if(sideSensor.getValue() < 30 && heightSensor.getValue()>30){
 					isBlueBlock = true;
@@ -85,12 +88,12 @@ public class DetectObject extends Thread {
 							Sound.buzz();
 					
 					}
-				while (Button.waitForAnyPress() != Button.ID_ESCAPE);
-				System.exit(0);	
+				//while (Button.waitForAnyPress() != Button.ID_ESCAPE);
+				//System.exit(0);	
 				}
-			}
-		
-	}
+//			}
+//		
+//	}
 	/**Pause the thread by deactivating the inner loop
 	 * 
 	 */
@@ -127,6 +130,10 @@ public class DetectObject extends Thread {
 		DetectObject.pauseThread();
 		// activate dodge object
 		DodgeObject.resumeThread();
+		
+	}
+	public boolean getIsBlueBlock(){
+		return isBlueBlock;
 		
 	}
 }

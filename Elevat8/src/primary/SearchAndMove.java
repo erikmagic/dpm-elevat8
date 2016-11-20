@@ -57,8 +57,8 @@ public class SearchAndMove extends Thread {
 	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
-		while(!complete_stop){
-			while(thread_on){
+//		while(!complete_stop){
+//			while(thread_on){
 				//while the scanner is not scanning anything
 				while (!scanning()){
 					//depending on where the robot is on the map, it will travel following a certain path please see pathSetter function for detail
@@ -77,8 +77,8 @@ public class SearchAndMove extends Thread {
 				//TODO: what to do when scan scans something: bridge with wall following or object capturing
 				//BRIDGE with object recognition
 			}
-		}
-	}
+//		}
+//	}
 	/**Scanning method: scan the environment for obstacles depending on where the robot is on the map
 	 * returns a boolean which indicates if an object has been detected in the scanning process
 	 */

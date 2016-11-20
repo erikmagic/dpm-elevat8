@@ -45,21 +45,21 @@ public class DodgeObject extends Thread {
 		}
 		
 		public void run(){
-			while(!complete_stop){
-				while(thread_on){
+//			while(!complete_stop){
+//				while(thread_on){
 					// algorithm
 						//MYCODE
 					//TODO: implement robustness with front sensor dodging
 						double Begheading = odo.getAngle();
 						//perform bangbang
 				
-						while(odo.getAngle() > (Begheading+180)%360 + STOP_ERROR || odo.getAngle() < (Begheading+180)%360 - STOP_ERROR){
+						while(odo.getAngle() > ((Begheading+180)%360+STOP_ERROR) || odo.getAngle() < ((Begheading+180)%360-STOP_ERROR)){
 							bangbang();
 						}
 						
 				}
-			}
-		}
+//			}
+//		}
 		public void bangbang(){
 			double distance = sideSensor.getValue();
 			double distError = BANDCENTER - distance;

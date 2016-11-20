@@ -29,8 +29,8 @@ public class Initialization {
 	// motors fields
 	private RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	private RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
-	//private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
-	//private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
+	private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
@@ -124,7 +124,7 @@ public class Initialization {
 	 */
 	
 	// corner coordinates
-	private final double[][] X = {{0,0,0},{304.8,0,90},{304.8,304.8,180},{0,304.8,270}};
+	public static final double[][] initialPosition = {{0,0,0},{304.8,0,90},{304.8,304.8,180},{0,304.8,270}, {0, 0, 90}};
 	
 	/**Empty constructor
 	 * 
@@ -139,7 +139,7 @@ public class Initialization {
 	 */
 	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
-		//getWIFI();
+		getWIFI();
 		// initialize objects used troughout the code
 		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
@@ -148,6 +148,7 @@ public class Initialization {
 		// localize the robot once everything has been set up before
 		//searchMove.start();
 		loc.localize();
+		clawMotor.rotate(-180);
 		//detectObject.run();
 		//System.exit(0);
 	}
@@ -230,13 +231,14 @@ public class Initialization {
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-		//capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
-		//gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		
-		loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
+		GoToZoneForDemo gotozonefordemo = new GoToZoneForDemo(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION,WHEELRADIUS, TRACKSIZE, sideSensor, frontSensor);
+		GoToZone gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		loc = new Localization (leftMotor, rightMotor, odo, nav, searchMove,detectObject,capture, gotozone,gotozonefordemo,dodgeObject,FORWARDSPEED,ROTATIONSPEED,ACCELERATION,WHEELRADIUS,TRACKSIZE,frontSensor,sideSensor,heightSensor,correctionSensor, zone[0], zone[1]);
+		//loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
 	}
 	/** Gets the instance of capture object initialized in the Initialization and Capture thread started in the localization.
 	 * Needs to be called after initialize in order to dodge nullPointException. 
