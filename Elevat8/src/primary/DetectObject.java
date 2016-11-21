@@ -85,8 +85,10 @@ public class DetectObject extends Thread {
 							Sound.buzz();
 					
 					}
-				while (Button.waitForAnyPress() != Button.ID_ESCAPE);
-				System.exit(0);	
+				
+				// if the block detected is the blue styrofoam : activate capture
+				if (isBlueBlock) activateCapture();
+				else activateDodgeObject();
 				}
 			}
 		

@@ -41,6 +41,9 @@ public class GoToZone extends Thread {
 			thread_on = true;
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		public void run(){
 			while(!complete_stop){
 				while(thread_on){

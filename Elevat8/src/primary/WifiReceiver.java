@@ -9,6 +9,13 @@ import lejos.hardware.Button;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 
+/**Connects to wi-fi. Once the connection has been established, fetch needed parameters from 
+ * another computer used as a server connected to the same wi-fi. These parameters are then passed to the 
+ * Initialization class. The ip address of the other computer that is used as a server is saved in this 
+ * class and might need to be updated.
+ * @author Charles-William 
+ *
+ */
 public class WifiReceiver {
 	
 	private static final String SERVER_IP = "192.168.2.19"; // will change on demo/competition day
@@ -16,6 +23,22 @@ public class WifiReceiver {
 
 	private static TextLCD LCD = LocalEV3.get().getTextLCD();
 	
+	/**Connect to the wi-fi and fetches 
+	 * BTN -> [1 - 17]
+	 * BSC -> [1 - 4]
+	 * CTN -> [1 - 17]
+	 * CSC -> [1 - 4]
+	 * LRZx -> [-1 - 10]
+	 * LRZy -> [-1 - 10]
+	 * URZx -> [0 - 11]
+	 * URZy -> [0 - 11]
+	 * LGZx -> [-1 - 10]
+	 * LGZy -> [-1 - 10]
+	 * UGZx -> [0 - 11]
+	 * UGZy -> [0 - 11]
+	 * 
+	 * 
+	 */
 	public void initiateWifi(){
 		
 		WifiConnection conn = null;
