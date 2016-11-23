@@ -2,8 +2,8 @@ package primary;
 
 import lejos.robotics.RegulatedMotor;
 
-/**Odometer class, takes value from the tachometer and gives a somewhat precise estimation of the current position. 
- * The Odometer works closely with the Odometer Correction class in order to achieve more precise results
+/**Takes value from the tachometer and gives a somewhat precise estimation of the current position. 
+ * The Odometer works closely with the Odometer Correction class in order to achieve more precise results.
  * @author Erik-Olivier Riendeau, 2016
  *
  */
@@ -36,8 +36,9 @@ public class Odometer extends Thread {
 		this.wheelRadius = wheelRadius;
 		
 	}
-	/**Runnable instance
-	 * 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#run()
 	 */
 	public void run(){
 		while(always_on){
@@ -112,21 +113,36 @@ public class Odometer extends Thread {
 			}
 		}
 	}
+	/**
+	 * @return - the most updated position in the x axis in cm.
+	 */
 	public double getX(){
 		synchronized(lock){
 			return positionX;
 		}
 	}
+	/**
+	 * @return - the most updated position in the y axis in cm.
+	 */
 	public double getY(){
 		synchronized(lock){
 			return positionY;
 		}
 	}
+	/**
+	 * @return - the most updated angle in degrees.
+	 */
 	public double getAngle(){
 		synchronized(lock){
 			return theta * 180/Math.PI;
 		}
 	}
+	/**
+	 * @param position - set { position in x in cm, position in y in cm, angle in degrees from 0 to 360 }
+	 * @param update - { true - will update the first element of the position array, true - will update the 
+	 * second element of the position array, true - will update the third element of the position array }.
+	 * If any of these elements are false, it will not update the corresponding position.
+	 */
 	public void setPosition(double[] position, boolean[] update) {
 		synchronized (lock){
 			if (update[0]){ 
@@ -141,6 +157,9 @@ public class Odometer extends Thread {
 		}
 	}
 
+	/**
+	 * @return { the position in x in cm, the position in y in cm, the angle in degrees }
+	 */
 	public double[] getPosition() {
 		synchronized (this) {
 			return new double[] { positionX, positionY, theta * 180/Math.PI };
@@ -159,17 +178,31 @@ public class Odometer extends Thread {
 		}
 	}
 //TESTING END
+	
+	/**
+	 * @param x - set the position on the x axis in cm
+	 */
 	public void setX(double x){
 		positionX = x;
 	}
+	/**
+	 * @param y - set the position on the y axis in cm
+	 */
 	public void setY(double y){
 		positionY = y;
 	}
+	/**
+	 * @param ang - set the angle in degrees
+	 */
 	public void setAngle(double ang){
 		theta = ang * 	Math.PI/180;
 	}
-	// static 'helper' methods
-	public static double fixDegAngle(double angle) {
+	
+	/**
+	 * @param angle - in degrees , can be negative or more than 360
+	 * @return fixed angle that include negative angles and angle above 360 degrees.
+	 */
+	private double fixDegAngle(double angle) {
 		if (angle < 0.0)
 			angle = 2*Math.PI + (angle % (2*Math.PI));
 

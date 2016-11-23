@@ -2,7 +2,9 @@ package primary;
 
 import lejos.robotics.RegulatedMotor;
 
-/**This class dodges a wooden brick in most case by using the front and side sensors. It migh occur that the class dodges a styrofoam block if the robot already holds some and is going bacl to the
+/**This class dodges a wooden brick in most case by using the front and side sensors. It might occur that the class dodges a 
+ * styrofoam block if the robot already holds enough blocks and is going back to its zone. This class use the bang bang operatio
+ * to dodge blocks.
  * zone.
  * @author Erik-Olivier Riendeau, 2016
  *
@@ -44,28 +46,46 @@ public class DodgeObject extends Thread {
 			thread_on = true;
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
 		public void run(){
-//			while(!complete_stop){
-//				while(thread_on){
+			while(!complete_stop){
+				while(thread_on){
 					// algorithm
 						//MYCODE
 					//TODO: implement robustness with front sensor dodging
 						double Begheading = odo.getAngle();
 						//perform bangbang
 				
-						while(odo.getAngle() > ((Begheading+180)%360+STOP_ERROR) || odo.getAngle() < ((Begheading+180)%360-STOP_ERROR)){
+						while(odo.getAngle() > (Begheading+180)%360 + STOP_ERROR || odo.getAngle() < (Begheading+180)%360 - STOP_ERROR){
 							bangbang();
 						}
+					// test, log the result and exit
+						Logger.log("dodge object worked");
+						System.exit(0);
 						
 				}
-//			}
-//		}
+			}
+		}
+		
+		/**If the robot's position is between two thresholds, the robot will just advance. The first threshold is the minimum one and
+		 * the second threshold is the maximum one. If the robot's position is less than the minimum threshold, then the robot will 
+		 * repeatedly turn
+		 * to increase its position by getting further from the 
+		 * object the sensor is detecting.
+		 *  Else if the robot's position is more than the maximum threshold, the robot will repeatedly turn
+		 *  to lower its
+		 * position by getting closer to what the sensor is detecting.
+		 * 
+		 */
 		public void bangbang(){
 			double distance = sideSensor.getValue();
 			double distError = BANDCENTER - distance;
 			
 			if (Math.abs(distError) <= BANDWIDTH) { // Within limits, same speed
-				nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
+				leftMotor.setSpeed(FORWARDSPEED);
+				leftMotor.setSpeed(FORWARDSPEED);
 				leftMotor.forward();
 				rightMotor.forward();
 			}

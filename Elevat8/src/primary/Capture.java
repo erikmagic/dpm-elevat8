@@ -2,7 +2,7 @@ package primary;
 
 import lejos.robotics.RegulatedMotor;
 
-/**Capture class that captures a styrofoam block once the detect object has detected such a block.
+/**Capture class that captures a styrofoam block once the detect object has detected such a block. The 
  * @author Erik-Olivier Riendeau, 2016
  *
  */
@@ -12,12 +12,10 @@ public class Capture extends Thread {
 	private RegulatedMotor leftMotor, rightMotor, clawMotor, elevateMotor;
 	private Odometer odo;
 	private Navigation nav;
-	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
+	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION, frontD, blockCount;
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop, thread_on;
 	
-	public int frontD;
-	public int blockCount = 0;
 	
 	/** Capture constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 	 * @param leftMotor
@@ -43,7 +41,6 @@ public class Capture extends Thread {
 		this.nav = nav;
 		this.frontSensor = frontSensor;
 		this.sideSensor = sideSensor;
-		this.FORWARDSPEED = FORWARDSPEED;
 		complete_stop = false;
 		thread_on = true;
 	}
@@ -52,10 +49,10 @@ public class Capture extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run(){
-		//while(!complete_stop){
-			//while(thread_on){
+		while(!complete_stop){
+			while(thread_on){
 				// algorithm
-				// TODO implement an algorithm to capture a block
+				// describe how the capture works in the class comment
 				leftMotor.setSpeed(40);
 				rightMotor.setSpeed(40);
 				nav.turnTo((odo.getAngle()+90)%360,true);
@@ -99,10 +96,12 @@ public class Capture extends Thread {
 					//}
 				//}
 				
+				// test log the result and exit
+						Logger.log("capture worked");
+						System.exit(0);
 				
-				
-			//}
-		//}
+			}
+		}
 	}
 	/**Pause the thread by deactivating the inner loop
 	 * 
@@ -125,10 +124,10 @@ public class Capture extends Thread {
 	/**ActivateGoToZone pause the current thread and resumes the thread Go To Zone 
 	 * 
 	 */
-//	public void activateGoToZone(){
-//		// pause current thread
-//		Capture.pauseThread();
-//		// activate go to zone 
-//		GoToZone.resumeThread();
-//	}
+	public void activateGoToZone(){
+		// pause current thread
+		Capture.pauseThread();
+		// activate go to zone 
+		GoToZone.resumeThread();
+	}
 }

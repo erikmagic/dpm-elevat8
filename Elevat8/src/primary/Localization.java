@@ -19,21 +19,19 @@ public class Localization {
 	private RegulatedMotor leftMotor, rightMotor;
 	private Odometer odo;
 	private Navigation nav;
-	private USSensor frontSensor, sideSensor, heightSensor;
+	private USSensor frontSensor;
 	private ColorSensor correctionSensor;
-	private double WHEELRADIUS, TRACKSIZE;
-	private int ROTATIONSPEED = 80, FORWARDSPEED, ACCELERATION, STOP = 0;
+	private double WHEELRADIUS;
+	private int ROTATIONSPEED, FORWARDSPEED, STOP = 0;
 	private SearchAndMove searchMove;
 	private DetectObject detectObject;
 	private Capture capture;
 	private GoToZone gotozone;
 	private DodgeObject dodgeObject;
-	private GoToZoneForDemo goToZoneForDemo;
 	
-	private double angleA, angleB, theta, positionX, positionY;
+	private double angleA, angleB;
 	private double[] pos = new double[3], angle = new double[4];
-	private int zonex, zoney;
-	private final int WALL_DISTANCE = 40, NOISE_MARGIN = 10;//20;
+	private final int WALL_DISTANCE = 40;
 	private int countgridlines = 0; 
 	private final double COLORSENSOR_TO_CENTER_TRACK = 8.5;//8.5
 	
@@ -54,126 +52,50 @@ public class Localization {
 	 * @param capture
 	 * @param gotozone
 	 * @param dodgeObject
-	 * @param FORWARDSPEED
-	 * @param ROTATIONSPEED
-	 * @param ACCELERATION
-	 * @param WHEELRADIUS
-	 * @param TRACKSIZE
-	 * @param frontSensor
+	 * @param FORWARDSPEED - in degrees/cm
+	 * @param ROTATIONSPEED - in degrees/cm
+	 * @param ACCELERATION - in degrees/cm^2
+	 * @param WHEELRADIUS - in cm
+	 * @param TRACKSIZE - in cm
+	 * @param frontSensor - 
 	 * @param sideSensor
 	 * @param heightSensor
 	 * @param correctionSensor
 	 */ 
 	
 	public Localization(RegulatedMotor leftMotor, RegulatedMotor rightMotor, Odometer odo, Navigation nav,
-			SearchAndMove searchMove, DetectObject detectObject, Capture capture, GoToZone gotozone, GoToZoneForDemo goToZoneForDemo,
-			DodgeObject dodgeObject, int FORWARDSPEED, int ROTATIONSPEED, int ACCELERATION, double WHEELRADIUS,
-			double TRACKSIZE, USSensor frontSensor, USSensor sideSensor, USSensor heightSensor,
-			ColorSensor correctionSensor, int zonex, int zoney) {
+			SearchAndMove searchMove, DetectObject detectObject, Capture capture, GoToZone gotozone,
+			DodgeObject dodgeObject, int FORWARDSPEED, int ROTATIONSPEED,  double WHEELRADIUS,
+			double TRACKSIZE, USSensor frontSensor, ColorSensor correctionSensor) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.odo = odo;
 		this.nav = nav;
 		this.frontSensor = frontSensor;
-		this.sideSensor = sideSensor;
-		this.heightSensor = heightSensor;
 		this.correctionSensor = correctionSensor;
-		this.ACCELERATION = ACCELERATION;
 		this.WHEELRADIUS = WHEELRADIUS;
 		this.FORWARDSPEED = FORWARDSPEED;
 		this.ROTATIONSPEED = ROTATIONSPEED;
-		this.TRACKSIZE = TRACKSIZE;
 		this.searchMove = searchMove;
 		this.capture = capture;
 		this.gotozone = gotozone;
 		this.dodgeObject = dodgeObject;
-		this.goToZoneForDemo = goToZoneForDemo;
 		this.detectObject = detectObject;
-		this.zonex = zonex;
-		this.zoney = zoney;
+		
 	}
 	
 	
-//	public Localization(RegulatedMotor leftMotor, RegulatedMotor rightMotor, Odometer odo, Navigation nav,
-//			 int FORWARDSPEED, int ROTATIONSPEED, int ACCELERATION, double WHEELRADIUS,
-//			double TRACKSIZE, USSensor frontSensor, ColorSensor correctionSensor) {
-//
-//		this.leftMotor = leftMotor;
-//		this.rightMotor = rightMotor;
-//		this.odo = odo;
-//		this.nav = nav;
-//		this.frontSensor = frontSensor;
-//		
-//		this.correctionSensor = correctionSensor;
-//		this.ACCELERATION = ACCELERATION;
-//		this.WHEELRADIUS = WHEELRADIUS;
-//		this.FORWARDSPEED = FORWARDSPEED;
-//		this.ROTATIONSPEED = ROTATIONSPEED;
-//		this.TRACKSIZE = TRACKSIZE;
-//		
-//	}
+
 	/**
-	 * This method does the actual localization.
+	 * This method does the actual localization. The localization chosen if falling edge. The robot thus rotates until the front sensor does not detect a wall anymore.
+	 * Once done, the robot latches this angle and keep rotating until it does detect the other wall. It then latches this angle and calculate its initial orientation.
+	 * After, the robot heads to an angle of 0 degrees. Finally, the robot turns on itself to detect the four grid lines and determine its initial X and Y. The robot
+	 * then proceeds to go to the edge of the tile with the same orientation. The values of the odometer are updated depending on which corner the robot is.
 	 * 
 	 */
 	public void localize() {
 		
-		// perform the ultrasonic localization
-//		leftMotor.setSpeed(ROTATIONSPEED);
-//		rightMotor.setSpeed(ROTATIONSPEED);
-		// rotate the robot until it sees no wall
-		/*while (frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN) {
-			// turn clockwise
-			leftMotor.forward();
-			rightMotor.backward();
-		}
-		// keep rotating until the robot sees a wall, then latch the angle
-		while (frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN) {
-			// turn clockwise
-			leftMotor.forward();
-			rightMotor.backward();
-		}
-		Sound.beep();
-		angleA = odo.getAngle();
-		// switch direction and wait until it sees no wall
-		while (frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN) {
-			// turn counterclockwise
-			leftMotor.backward();
-			rightMotor.forward();
-		}
-		// keep rotating until the robot sees a wall, then latch the angle
-		while (frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN) {
-			// turn counterclockwise
-			leftMotor.backward();
-			rightMotor.forward();
-//		}*/
-//		while(frontSensor.getValue() > WALL_DISTANCE-NOISE_MARGIN){//30
-//			// turn clockwise
-//			leftMotor.backward();
-//			rightMotor.forward();
-//		}
-//		Sound.beep();
-//		while(frontSensor.getValue() < WALL_DISTANCE+NOISE_MARGIN){//50
-//			// turn counterclockwise
-//			leftMotor.backward();
-//			rightMotor.forward();
-//		}
-//		Sound.beep();
-//		angleA = odo.getAngle();
-//		
-//		while(frontSensor.getValue() > WALL_DISTANCE - NOISE_MARGIN){//30
-//			// turn clockwise
-//			leftMotor.forward();
-//			rightMotor.backward();
-//		}
-//		Sound.beep();
-//		while(frontSensor.getValue() < WALL_DISTANCE + NOISE_MARGIN){//50
-//			// turn counterclockwise
-//			leftMotor.forward();
-//			rightMotor.backward();
-//		}
-//		Sound.beep();
-//		angleB = odo.getAngle();
+
 		while (frontSensor.getValue() <= WALL_DISTANCE){				
 			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
 		}
@@ -198,11 +120,7 @@ public class Localization {
 		// angleA is clockwise from angleB, so assume the average of the
 		// angles to the right of angleB is 45 degrees past 'north'
 
-		// calculate theta
-//		theta = computeAngle(angleA, angleB);
-//		Sound.buzz();
-//		// turn to the 0-axis
-//		nav.turnTo(theta-5, true);
+
 		if (angleA>angleB){
 			pos[2] = 210.0 - (angleA-angleB)/2;
 		}
@@ -213,30 +131,20 @@ public class Localization {
 		// update the odometer position (example to follow:)
 		odo.setPosition(pos, new boolean [] {true, true, true});
 
-//		// update the odometer position (example to follow:)
-//		double position[] = {0.0, 0.0, 0.0};
-//		
-//		//odometer setposition method problem, reverse, odometer line 131;*******************************************************
-//		boolean update[] = {true, true, true};
-//		odo.setPosition(position, update);
+
+
 		nav.turnTo(0, true);
-//		try { Thread.sleep(3000); } catch (InterruptedException e){};
 		
 		// start the light localization
 		nav.turnTo(45, true); // turn 135 degrees to make it face to destination ( furthest corner from wall of the tile)
-//		odo.setPosition(new double [] { 0.0,  0.0, 135 }, new boolean[] {false, false, true});
-		//set position wrong odometer line 135, add "* Math.PI/180;"*********************
+
 		leftMotor.setSpeed(FORWARDSPEED);
 		rightMotor.setSpeed(FORWARDSPEED);
 		
 		leftMotor.rotate(convertDistance(WHEELRADIUS,11),true);
 		rightMotor.rotate(convertDistance(WHEELRADIUS,11),false);
-		// advance the equivalent of one tracksize towards the corner of the tile
-		// nav.goForward(TRACKSIZE/2);
-		// not sure goforward works*********************************************
 		
 		
-		//color sensor null pointer exception , color sensor line 64, add this.line 30,add lock = new Object();****************************
 		while (countgridlines < 4)//start counting lines
 		{	
 			//get current posistion from odometer**********************getPosition()problem
@@ -274,40 +182,16 @@ public class Localization {
 		
 		// update the odometer position (example to follow:)
 		odo.setPosition(pos, new boolean [] {true, true, true});
-		// start calculating x, y
-//		double temp = 0;
-//		temp = 360 - angle[1] + angle[3];
-//		positionY = -COLORSENSOR_TO_CENTER_TRACK * Math.cos(Math.PI*temp/360);
-//		temp = Math.abs(angle[0] - angle[2]);
-//		positionX= COLORSENSOR_TO_CENTER_TRACK * Math.cos(Math.PI*temp/360); 
-//		theta = temp / 2 + 90;//90
-//		pos = odo.getPosition();
-//		theta = theta + pos[2];
-//		if (theta>=360)
-//		{
-//			theta=theta % 360;
-//		}
-//		if (theta<0)
-//		{	
-//			theta=360+theta;
-//		}
-//		// the x y is according the target origin (0,0)
-//		odo.setPosition(new double [] {positionX, positionY, 0}, new boolean [] {true, true, false});	
-//		// travel to origin
-//		
-		//navigation travelTo method line 64 add * (180.0 / Math.PI);********************************************
+	
 		nav.travelTo(0,0);
 		nav.turnTo(0, true);
 		Sound.beep();
 		Sound.beep();
 		// wait a bit
 		try { Thread.sleep(3000); } catch (InterruptedException e){};
-		// turn back to 0 direction
-		//try { Thread.sleep(3000); } catch (InterruptedException e){};
-		//nav.turnTo(95, true);
-		//odo.setPosition(new double [] { 0.0,  0.0, 0.0}, new boolean[] {true, true, true});
+
 		
-		//TODO UNCOMMENT FOR x
+		
 		int startingCorner;
 		if ( Initialization.BTN == 1) startingCorner = Initialization.BSC;
 		else { startingCorner = Initialization.CSC; }
@@ -320,44 +204,92 @@ public class Localization {
 		
 		// when localization is done, start Threads to start actually moving the
 		// robot
+		Sound.twoBeeps();
+		Sound.twoBeeps();
+		Sound.twoBeeps();
 		startUlteriorThreads();
+		activateSearchAndMove();
 	}
 
-	/**
-	 * starts thread used in the second part of the lab and pause them right
-	 * after
+	/**Starts ulterior threads  SearchAndMove, DetectObjects, Capture, GoToZone and DodgeObject.
+	 *  Also catches exception and write them in the logger file.
 	 * 
 	 */
 	public void startUlteriorThreads() {
-		boolean gotOneBlock = false;
-		while(!gotOneBlock){
-			searchMove.run();
-			//SearchAndMove.pauseThread();
-			detectObject.run();
-			//DetectObject.pauseThread();
-			if (detectObject.getIsBlueBlock()){
-				capture.run();
-				//Capture.pauseThread();
-				gotOneBlock = true;
-			}
-			else{
-				dodgeObject.run();
-				//DodgeObject.pauseThread();
-			}
+		Logger.log("search and move started");
+		try {
+			searchMove.start();
+		} catch (NullPointerException e) {
+			Logger.log("error searchMove");
 		}
-		double Xcoord = zonex*30.48;
-		double Ycoord = zoney*30.48;
-		goToZoneForDemo.goToZone(Xcoord,Ycoord);
-		//TODO: WIHTOUT WIFI
-		//goToZoneForDemo.goToZone(60,60);
-		
-		//GoToZone.pauseThread();
+		Logger.log("search and move paused");
+		try {
+			SearchAndMove.pauseThread();
+		} catch (Exception e) {
+			Logger.log("pausing searchmove failed");
+
+		}
+		Logger.log("detect object started");
+		try {
+			detectObject.start();
+		} catch (Exception e) {
+			Logger.log("detect object failed");
+
+		}
+		Logger.log("detectObject paused");
+		try {
+			DetectObject.pauseThread();
+		} catch (Exception e) {
+			Logger.log("pausing detect object failed");
+
+		}
+		Logger.log("capture started");
+		try {
+			capture.start();
+		} catch (Exception e) {
+			Logger.log("capture failed");
+
+		}
+		Logger.log("capture paused");
+		try {
+			Capture.pauseThread();
+		} catch (Exception e) {
+			Logger.log("pausing capture failed");
+
+		}
+		Logger.log("gotozone started");
+		try {
+			gotozone.start();
+		} catch (Exception e) {
+			Logger.log("gotozone failed");
+		}
+		Logger.log("gotozone paused");
+		try {
+			GoToZone.pauseThread();
+		} catch (Exception e) {
+			Logger.log("pausing gotozone failed");
+
+		}
+		Logger.log("dodgeobject started");
+		try {
+			dodgeObject.start();
+		} catch (Exception e) {
+			Logger.log("dodge object failed");
+
+		}
+		try {
+			DodgeObject.pauseThread();
+		} catch (Exception e) {
+			Logger.log("pausing dodge object failed");
+
+		}
+		Logger.log("dodgeobject paused");
 	}
 	
 	/**Computes the angle from the 2 angles latched during the localization to determine
 	 * how much should the robot rotate
-	 * @param angleA
-	 * @param angleB
+	 * @param angleA - in degrees
+	 * @param angleB - in degrees
 	 * @return the average of the two + either 45 or 225 depending on which direction the robot
 	 * is rotating
 	 */
@@ -374,14 +306,20 @@ public class Localization {
 			return theta;
 		}
 	}
-	/**This method converts the motor traval distance to the the angle of 
-	 * how much motor should rotate
-	 * @param radius
-	 * @param distance
-	 * @return the angle motor should ratate
+	/**Computes the degrees the wheel should return to travel a certain distance depending on the wheel's radius.
+	 * @param radius of the wheel in cm
+	 * @param distance to travel in cm
+	 * @return the angle the motor should rotate in degrees
 	 */
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
+	}
+	
+	/**Resumes the thread Search and Move. 
+	 * 
+	 */
+	private void activateSearchAndMove(){
+		SearchAndMove.resumeThread();
 	}
 	
 }

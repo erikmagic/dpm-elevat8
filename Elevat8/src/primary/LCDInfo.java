@@ -5,7 +5,8 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 
-/**
+/**Prints the value reported by the odometer on the EV3's LCD screen. Can also 
+ * be used for debugging by printing all sorts of variables in real time.
  * @author Ken
  *
  */
