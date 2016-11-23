@@ -60,7 +60,7 @@ public class DetectObject extends Thread {
 		//move robot forward to a block till the front distance less than certain distance 
 //				try{Thread.sleep(3000);}catch(Exception e){}
 				
-				while(frontSensor.getValue() > 10){
+				while(frontSensor.getValue() > 15){
 					leftMotor.setSpeed(FORWARDSPEED);
 					rightMotor.setSpeed(FORWARDSPEED);
 					
