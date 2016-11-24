@@ -24,10 +24,13 @@ public class Main {
 		// which is not possible in the main
 
 		Initialization initialize = new Initialization();
+
 		initialize.initialize();
 		// initialize.sensor_test();
-		// initialize.isolation_test();
+		//initialize.isolation_test();
 		// initialize.localization_test();
+		//initialize.gotozone_test();
+		//initialize.detection_test();
 	}
 
 }

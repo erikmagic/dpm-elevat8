@@ -134,7 +134,8 @@ public class Initialization {
 	 */
 	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
-		getWIFI();
+
+//		getWIFI();
 		// initialize objects used troughout the code
 		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
@@ -142,6 +143,7 @@ public class Initialization {
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
+		//nav.turnTo(90,true);
 		loc.localize();
 		//detectObject.run();
 		//System.exit(0);
@@ -158,10 +160,11 @@ public class Initialization {
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
-	public void getWIFI() {
+/*	public void getWIFI() {
 		WifiReceiver receiver = new WifiReceiver();
 		receiver.initiateWifi();
 	}
+	*/
 
 	/**
 	 * Starts the  ODOMETER, USSENSORS, COLORSENSORS AND DISPLAY
@@ -218,12 +221,47 @@ public void initializeObjects() throws FileNotFoundException {
 
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 
-
-		gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-
+			//the last two doubles is final coordinate (0,0)
+		gotozone = new GoToZone(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor, 60, 60);
+		
 		loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, FORWARDSPEED, ROTATIONSPEED, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
 		//loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
 
 	}
+
+	public void gotozone_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+		gotozone.start();
 	
+	}
+	public void detection_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+		detectObject.start();
+	}
+	public void isolation_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+//		nav.turnTo(180, true);
+//		nav.turnTo(360, true);
+		//TODO: PLEASE DO NOT REMOVE THIS CODE, might be useful later
+		while(true){
+			buttonChoice = Button.waitForAnyPress();
+			while (buttonChoice != Button.ID_LEFT
+				&& buttonChoice != Button.ID_RIGHT);
+			if (buttonChoice == Button.ID_LEFT){
+				odo.setTrack(0.1);
+			}
+			else if (buttonChoice == Button.ID_RIGHT){
+				odo.setTrack(-0.1);
+			}
+			nav.turnTo(90, true);
+			Button.waitForAnyPress();
+			nav.turnTo(0, true);
+		}
+//		nav.turnTo(270, true);
+//		nav.turnTo(0, true);
+		//System.exit(0);
+	}
 }
