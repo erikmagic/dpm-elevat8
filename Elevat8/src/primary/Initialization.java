@@ -29,8 +29,8 @@ public class Initialization {
 	// motors fields
 	private RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
 	private RegulatedMotor rightMotor = new EV3LargeRegulatedMotor(MotorPort.C);
-	//private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
-	//private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
+	private RegulatedMotor elevateMotor = new EV3LargeRegulatedMotor(MotorPort.D);
+	private RegulatedMotor clawMotor = new EV3LargeRegulatedMotor(MotorPort.A);
 
 	// sensor fields
 	private Brick brick = BrickFinder.getDefault();
@@ -141,13 +141,15 @@ public class Initialization {
 		// start by getting wifi info to fetch needed parameters for object initializations
 		//getWIFI();
 		// initialize objects used troughout the code
-		initializeObjects();
+		//initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
-		startThreads();
+		//startThreads();
+		
+		capture_test();
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
-		loc.localize();
+		//loc.localize();
 		//detectObject.run();
 		//System.exit(0);
 	}
@@ -190,6 +192,11 @@ public class Initialization {
 		startThreads();
 		loc.localize();
 	}
+	public void capture_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+		capture.run();
+	}
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
@@ -230,7 +237,7 @@ public class Initialization {
 		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
 		//nav = new Navigation(odo);
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-		//capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
+		capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);

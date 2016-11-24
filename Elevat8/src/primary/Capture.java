@@ -16,7 +16,8 @@ public class Capture extends Thread {
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop, thread_on;
 	
-	public int blockCount;
+	public int frontD;
+	public int blockCount = 0;
 	
 	/** Capture constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 	 * @param leftMotor
@@ -42,6 +43,7 @@ public class Capture extends Thread {
 		this.nav = nav;
 		this.frontSensor = frontSensor;
 		this.sideSensor = sideSensor;
+		this.FORWARDSPEED = FORWARDSPEED;
 		complete_stop = false;
 		thread_on = true;
 	}
@@ -50,44 +52,56 @@ public class Capture extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run(){
-		while(!complete_stop){
-			while(thread_on){
+		//while(!complete_stop){
+			//while(thread_on){
 				// algorithm
 				// TODO implement an algorithm to capture a block
-				int frontD;
-				nav.turnBy(90,false);
-				if(frontSensor.getValue() > 20){
-					nav.goForward(10);
-				}
-				while(frontSensor.getValue() >= 10){
-					nav.goForward(2);
+				leftMotor.setSpeed(40);
+				rightMotor.setSpeed(40);
+				nav.turnTo((odo.getAngle()+90)%360,(frontD<=30));
+				frontD = frontSensor.getValue();
+				while(frontD > 10){
+					leftMotor.setSpeed(FORWARDSPEED);
+					rightMotor.setSpeed(FORWARDSPEED);
+					leftMotor.forward();
+					rightMotor.forward();
+					try{
+						Thread.sleep(1000);
+					}catch(Exception e){
+						
+					}
 					frontD = frontSensor.getValue();
-					clawMotor.rotate(90,true);
-					if(frontD < frontSensor.getValue()){
-						continue;
-					}
-					else{
-						clawMotor.rotate(85);
-						elevateMotor.rotate(270);
-						if(frontSensor.getValue() > 15){
-							activateGoToZone();
-							break;
-						}
-						else{
-							clawMotor.rotate(-85);
-							elevateMotor.rotate(-270);
-							clawMotor.rotate(50);
-							nav.turnBy(45, false);
-							nav.turnBy(-45, false);
-							continue;
-						}
-					}
 				}
+				//while(frontD > 3 && frontD < 15){
+					leftMotor.setSpeed(0);
+					rightMotor.setSpeed(0);
+					clawMotor.setSpeed(130);
+					clawMotor.rotate(130);
+					elevateMotor.rotate(270);
+					try{
+						Thread.sleep(1000);
+					}catch(Exception e){
+					}
+				
+						blockCount++;
+						activateGoToZone();
+						//break;
+				
+					//else{
+												//clawMotor.rotate(-110);
+						//elevateMotor.rotate(-270);
+						//continue;
+						//clawMotor.rotate(110);
+						//nav.turnTo((odo.getAngle()+45)%360, false);
+						//nav.turnTo((odo.getAngle()-45)%360, false);
+						//clawMotor.rotate(-110);
+					//}
+				//}
 				
 				
 				
-			}
-		}
+			//}
+		//}
 	}
 	/**Pause the thread by deactivating the inner loop
 	 * 
