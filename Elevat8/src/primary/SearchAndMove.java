@@ -57,6 +57,11 @@ public class SearchAndMove extends Thread {
 	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+
+		}
 		while(!complete_stop){
 			while(thread_on){
 				//while the scanner is not scanning anything
@@ -74,8 +79,19 @@ public class SearchAndMove extends Thread {
 					nav.setSpeeds(STOP, STOP);					//TODO: make sure goFoward is not buggy
 				}
 				
-				//TODO: what to do when scan scans something: bridge with wall following or object capturing
 				//BRIDGE with object recognition
+				activatedDetectObject();
+				Logger.log("detect object started");;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (thread_on){
+					Logger.log("problem system exited after search and move");
+					System.exit(0);
+				}
 			}
 		}
 	}
@@ -83,7 +99,7 @@ public class SearchAndMove extends Thread {
 	 * returns a boolean which indicates if an object has been detected in the scanning process
 	 */
 	private boolean scanning(){
-		/**position of scanned object, {heading, distance at which object was detected
+		/*position of scanned object, {heading, distance at which object was detected
 		 * -1 heading and 255 distance indicates no object detected
 		 */
 		double objectPosition [] = {-1,255};
@@ -93,7 +109,7 @@ public class SearchAndMove extends Thread {
 
 		//TODO: in the future, if code works well etc. clean it up by creating a for function and reduce lines
 		//TODO: also, maybe base turning on robot's current angle? something like that, save them
-		/**the direction which the robot scans varies depending on where the robot is on the map
+		/*the direction which the robot scans varies depending on where the robot is on the map
 		 * 1. On the bottom left corner, it scans 90 degrees from y+ to x+ axis
 		 * 2. On the bottom middle side, it scans 180 degrees from x- to x+ axis
 		 * 3. On the bottom right corner, it scans 90 degrees from x- to y+ axis
@@ -257,7 +273,7 @@ public class SearchAndMove extends Thread {
 		//this algorithm works with (0,0) being the CORNER of the map, not the on the first squares, correct accordingly
 		x += 1;
 		y += 1;
-		/**divide the map into squares, DIVISION determines how many square the length of the map is divided into
+		/*divide the map into squares, DIVISION determines how many square the length of the map is divided into
 		 * increase DIVISION in order to make path more precise
 		 * 1. Robot  travels on the first diagonal (heading 45 degrees)
 		 * 2. Then, travels on the rightmost side of the map downwards (heading 270 degrees)
@@ -366,7 +382,7 @@ public class SearchAndMove extends Thread {
 	/**Activate detect object if the robot detects any objects and pause current thread
 	 * 
 	 */
-	public static void activatedDetectObject(){
+	public  void activatedDetectObject(){
 		// pause the current thread
 		SearchAndMove.pauseThread();
 		// activate detect object

@@ -44,19 +44,9 @@ public class Navigation {
 	}
 	
 	/**
-	 * Simply goes forwards 
-	 */
-	public void goForwards(){
-		// TODO
-	}
-	/**
-	 * Simply goes backwards
-	 */
-	public void goBackwards(){
-		// TODO
-	}
-	/**
 	 * Travel to desired location , updating the robot's heading as he goes along. 
+	 * @param x - in cm
+	 * @param y - in cm
 	 */
 	public void travelTo(double x, double y) {
 		double minAng;
@@ -68,14 +58,15 @@ public class Navigation {
 				this.turnTo(minAng, false);
 			}			
 			this.setSpeeds(FORWARDSPEED, FORWARDSPEED);
-			Logger.log(Double.toString(odo.getX()));
 		}
-		Logger.log(Double.toString(odo.getX()));
 		this.setSpeeds(0, 0);
 	}
 	
 	/**
-	 * Rotates the robot to a desired angle
+	 * Rotates the robot to a desired angle. Will use the shortest rotation to the desired angle and 
+	 * control the motors appropriately. 
+	 * @param angle - in degrees from 0 to 360
+	 * @param stop - if true, the robot stops after turning
 	 */
 	public void turnTo(double angle, boolean stop){
 		double error = angle - this.odo.getAngle();
@@ -83,7 +74,6 @@ public class Navigation {
 		while (Math.abs(error) > DEG_MIN_ERR && Math.abs(error) < DEG_MAX_ERR) {
 
 			error = angle - this.odo.getAngle();
-			Logger.log(Double.toString(odo.getAngle()));
 			if (error < -180.0) {
 				this.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 			} else if (error < 0.0) {
@@ -99,18 +89,28 @@ public class Navigation {
 			this.setSpeeds(0, 0);
 }
 	}
-	/**
-	 * Rotates the robot by a desired angle
+	/**Go forwards for a certain distance in centimeters.
+	 * @param distance
 	 */
+<<<<<<< HEAD
 	
+=======
+>>>>>>> e1d20a1632602412ecc10dea3eeb4ee3c49ee8ad
 	public void goForward(double distance) {
 		this.travelTo(Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}
 	
+	/**Go backwards for a certain distance in centimeters.
+	 * @param distance
+	 */
 	public void goBackwards(double distance){
-		this.travelTo(-Math.cos(this.odo.getAngle()) * distance, Math.cos(this.odo.getAngle()) * distance);
+		this.travelTo(-Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}
 	
+	/**Private helper method that set the speeds of the motors in rotation/s together.
+	 * @param lSpd
+	 * @param rSpd
+	 */
 	public void setSpeeds(int lSpd, int rSpd) {
 		this.leftMotor.setSpeed(lSpd);
 		this.rightMotor.setSpeed(rSpd);
@@ -123,6 +123,11 @@ public class Navigation {
 		else
 			this.rightMotor.forward();
 	}
+	
+	/**Makes the robot turn by a certain angle.
+	 * @param angle - in degrees
+	 * @param stop - if true, then the robot stops after rotating.
+	 */
 	public void turnBy(double angle, boolean stop){
 
 		if(this.odo.getAngle()+angle > 0){

@@ -53,14 +53,22 @@ public class DetectObject extends Thread {
 	}
 	
 	public void run(){
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+
+		}
+		
 		while(!complete_stop){
 			while(thread_on){
+				int counter = 0;
 				// algorithm
 				// TODO
 		//move robot forward to a block till the front distance less than certain distance 
 //				try{Thread.sleep(3000);}catch(Exception e){}
 				
-				while(frontSensor.getValue() > 10){
+				while(frontSensor.getValue() > 15){
 					leftMotor.setSpeed(FORWARDSPEED);
 					rightMotor.setSpeed(FORWARDSPEED);
 					
@@ -78,16 +86,35 @@ public class DetectObject extends Thread {
 				
 				if(sideSensor.getValue() < 30 && heightSensor.getValue()>30){
 					isBlueBlock = true;
+					counter++;
 					Sound.twoBeeps();
 				}
 					else{
 							isBlueBlock = false;
 							Sound.buzz();
+							counter++;
 					
 					}
-				while (Button.waitForAnyPress() != Button.ID_ESCAPE);
-				System.exit(0);	
+				
+				// if the block detected is the blue styrofoam : activate capture
+
+				if (isBlueBlock && counter > 0) {
+					activateCapture(); 
+					Logger.log("capture started");
 				}
+				if (!isBlueBlock && counter > 0) {
+					activateDodgeObject(); 
+					Logger.log("dodge started");
+					}
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				}
+				
 			}
 		
 	}
