@@ -136,7 +136,6 @@ public class USSensor extends Thread  {
 	 */
 	public int getValue(){
 		synchronized (lock){
-			Logger.log("Distance : " + Integer.toString(this.distance));
 			return this.distance;
 		}
 	}

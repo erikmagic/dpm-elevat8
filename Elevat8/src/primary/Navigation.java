@@ -58,9 +58,7 @@ public class Navigation {
 				this.turnTo(minAng, false);
 			}			
 			this.setSpeeds(FORWARDSPEED, FORWARDSPEED);
-			Logger.log(Double.toString(odo.getX()));
 		}
-		Logger.log(Double.toString(odo.getX()));
 		this.setSpeeds(0, 0);
 	}
 	
@@ -76,7 +74,6 @@ public class Navigation {
 		while (Math.abs(error) > DEG_MIN_ERR && Math.abs(error) < DEG_MAX_ERR) {
 
 			error = angle - this.odo.getAngle();
-			Logger.log(Double.toString(odo.getAngle()));
 			if (error < -180.0) {
 				this.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
 			} else if (error < 0.0) {
