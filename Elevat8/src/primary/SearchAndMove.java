@@ -57,6 +57,11 @@ public class SearchAndMove extends Thread {
 	 * TODO: what does he mean... cannot use this method without navigation
 	 */
 	public void run(){
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+
+		}
 		while(!complete_stop){
 			while(thread_on){
 				//while the scanner is not scanning anything
@@ -76,6 +81,17 @@ public class SearchAndMove extends Thread {
 				
 				//BRIDGE with object recognition
 				activatedDetectObject();
+				Logger.log("detect object started");;
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (thread_on){
+					Logger.log("problem system exited after search and move");
+					System.exit(0);
+				}
 			}
 		}
 	}
@@ -366,7 +382,7 @@ public class SearchAndMove extends Thread {
 	/**Activate detect object if the robot detects any objects and pause current thread
 	 * 
 	 */
-	public static void activatedDetectObject(){
+	public  void activatedDetectObject(){
 		// pause the current thread
 		SearchAndMove.pauseThread();
 		// activate detect object

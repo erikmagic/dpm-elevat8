@@ -87,7 +87,7 @@ public class Initialization {
 
 	
 	// initialize logger
-	
+
 	
 	// numerical value fields
 	private final double TRACKSIZE = 16.35; // 14.5 -> not enough, 16 -> not enough, 16.5 -> too much from the middle of the left wheel to the middle of the right wheel
@@ -145,7 +145,6 @@ public class Initialization {
 		//searchMove.start();
 		//nav.turnTo(90,true);
 		loc.localize();
-		//clawMotor.rotate(180);
 		//detectObject.run();
 		//System.exit(0);
 	}

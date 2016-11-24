@@ -17,7 +17,7 @@ public class ColorSensor extends Thread {
 	private Object lock;
 	float[] sensorData;
 	private EV3ColorSensor colorSensor;
-	SampleProvider redMode;
+	private SampleProvider redMode;
 	private int sensorSize, value;
 	
 	

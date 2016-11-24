@@ -57,6 +57,11 @@ public class GoToZone extends Thread {
 		 * @see java.lang.Thread#run()
 		 */
 		public void run(){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+
+			}
 			while(!complete_stop){
 				while(thread_on){
 					// algorithm

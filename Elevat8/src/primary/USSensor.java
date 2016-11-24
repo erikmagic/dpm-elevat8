@@ -156,6 +156,7 @@ public class USSensor extends Thread  {
 						
 				return this.distance;
 			//Logger.log("Distance : " + Integer.toString(this.distance));
+
 		}
 	}
 }
