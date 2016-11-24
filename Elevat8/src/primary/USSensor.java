@@ -22,7 +22,7 @@ public class USSensor extends Thread  {
 	private Object lock;
 	float[] sensorData;
 	private ArrayList<Integer> hold_data, filter_list;
-	private int sensorSize, hold_data_size = 400, filter_list_size = 5, distance, answer, temp;
+	private int sensorSize, hold_data_size = 400, filter_list_size = 5, distance, answer, temp,filterControl = 0;
 	
 	
 	/**
@@ -54,8 +54,8 @@ public class USSensor extends Thread  {
 		while(constant_loop){
 			
 			// fetch data from sensor sensor
-			sensorProvider.fetchSample(sensorData, 0);
-			distance = (int)(sensorData[0]*100);
+//			sensorProvider.fetchSample(sensorData, 0);
+//			distance = (int)(sensorData[0]*100);
 			
 			/*
 			// filter implementation
@@ -134,10 +134,28 @@ public class USSensor extends Thread  {
 	/** returns the distance value filtered from the sensor
 	 * @return distance
 	 */
+	//NOTE: for now, using a simpe filter for now, since filter not done
 	public int getValue(){
 		synchronized (lock){
-			Logger.log("Distance : " + Integer.toString(this.distance));
-			return this.distance;
+			sensorProvider.fetchSample(sensorData, 0);
+			int distance = (int)(sensorData[0]*100);
+			if (distance >= 255 && filterControl < 10) {
+				// bad value, do not set the distance var, however do increment the
+				// filter value
+				filterControl++;
+			} else if (distance >= 255) {
+				// We have repeated large values, so there must actually be nothing
+				// there: leave the distance alone
+				this.distance = distance;
+			} else {
+				// distance went below 255: reset filter and leave
+				// distance alone.
+				filterControl = 0;
+				this.distance = distance;
+			}
+						
+				return this.distance;
+			//Logger.log("Distance : " + Integer.toString(this.distance));
 		}
 	}
 }

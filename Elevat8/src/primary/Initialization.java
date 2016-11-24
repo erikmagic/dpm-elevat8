@@ -143,8 +143,9 @@ public class Initialization {
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
+		//nav.turnTo(90,true);
 		loc.localize();
-		clawMotor.rotate(180);
+		//clawMotor.rotate(180);
 		//detectObject.run();
 		//System.exit(0);
 	}
@@ -240,5 +241,28 @@ public void initializeObjects() throws FileNotFoundException {
 		startThreads();
 		detectObject.start();
 	}
-	
+	public void isolation_test() throws FileNotFoundException{
+		initializeObjects();
+		startThreads();
+//		nav.turnTo(180, true);
+//		nav.turnTo(360, true);
+		//TODO: PLEASE DO NOT REMOVE THIS CODE, might be useful later
+		while(true){
+			buttonChoice = Button.waitForAnyPress();
+			while (buttonChoice != Button.ID_LEFT
+				&& buttonChoice != Button.ID_RIGHT);
+			if (buttonChoice == Button.ID_LEFT){
+				odo.setTrack(0.1);
+			}
+			else if (buttonChoice == Button.ID_RIGHT){
+				odo.setTrack(-0.1);
+			}
+			nav.turnTo(90, true);
+			Button.waitForAnyPress();
+			nav.turnTo(0, true);
+		}
+//		nav.turnTo(270, true);
+//		nav.turnTo(0, true);
+		//System.exit(0);
+	}
 }
