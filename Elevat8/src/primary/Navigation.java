@@ -92,10 +92,6 @@ public class Navigation {
 	/**Go forwards for a certain distance in centimeters.
 	 * @param distance
 	 */
-<<<<<<< HEAD
-	
-=======
->>>>>>> e1d20a1632602412ecc10dea3eeb4ee3c49ee8ad
 	public void goForward(double distance) {
 		this.travelTo(Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}

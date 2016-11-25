@@ -98,8 +98,8 @@ public class Initialization {
 	
 	// WIFI data variables
 	public static int BTN, BSC, CTN, CSC, LRZx, LRZy, URZx, URZy, LGZx, LGZy, UGZx, UGZy, corner;
-	public static int[] zone = new int[4];
-	public static int[] opponentZone =  new int[4];
+	public static double[] zone = new double[4];
+	public static double[] opponentZone =  new double[4];
 	/* RANGES:
 	 * BTN -> [1 - 17]
 	 * BSC -> [1 - 4]
@@ -145,12 +145,9 @@ public class Initialization {
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();
-<<<<<<< HEAD
 		//loc.localize();
-=======
 		//nav.turnTo(90,true);
 		loc.localize();
->>>>>>> e1d20a1632602412ecc10dea3eeb4ee3c49ee8ad
 		//detectObject.run();
 		//System.exit(0);
 	}
@@ -161,16 +158,12 @@ public class Initialization {
 		startThreads();
 		loc.localize();
 	}
-<<<<<<< HEAD
+	
 	public void capture_test() throws FileNotFoundException{
 		initializeObjects();
 		startThreads();
 		capture.run();
 	}
-=======
-	
-	
->>>>>>> e1d20a1632602412ecc10dea3eeb4ee3c49ee8ad
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
@@ -226,11 +219,8 @@ public void initializeObjects() throws FileNotFoundException {
 		//nav = new Navigation(odo);
 
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-<<<<<<< HEAD
-		capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-=======
 
 		capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 
@@ -238,7 +228,6 @@ public void initializeObjects() throws FileNotFoundException {
 
 		detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 
->>>>>>> e1d20a1632602412ecc10dea3eeb4ee3c49ee8ad
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 
 			//the last two doubles is final coordinate (0,0)
