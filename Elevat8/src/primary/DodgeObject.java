@@ -1,5 +1,6 @@
 package primary;
 
+import lejos.hardware.Sound;
 import lejos.robotics.RegulatedMotor;
 
 /**
@@ -17,11 +18,11 @@ public class DodgeObject extends Thread {
 	private RegulatedMotor leftMotor, rightMotor;
 	private Odometer odo;
 	private Navigation nav;
-	private int ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
+	private int ROTATIONSPEED = 92, FORWARDSPEED = 150, ACCELERATION;
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop;
 	private static volatile boolean thread_on;
-	private static final double BANDCENTER = 30, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 3;
+	private static final double BANDCENTER = 15, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 35;
 
 	/**
 	 * Dodge object constructor that allows most functionalities to the class (
@@ -50,6 +51,9 @@ public class DodgeObject extends Thread {
 		this.sideSensor = sideSensor;
 		complete_stop = false;
 		thread_on = true;
+//		this.ROTATIONSPEED = ROTATIONSPEED;
+//		this.FORWARDSPEED = FORWARDSPEED;
+//		this.ACCELERATION = ACCELERATION;
 	}
 
 	/*
@@ -73,14 +77,15 @@ public class DodgeObject extends Thread {
 				double Begheading = odo.getAngle();
 				// perform bangbang
 				
-				// test, log the result and exit
-				Logger.log("dodge object worked");
-				System.exit(0);
+//				// test, log the result and exit
+//				Logger.log("dodge object worked");
+//				System.exit(0);
 
-				while (odo.getAngle() > (Begheading + 180) % 360 + STOP_ERROR
-						|| odo.getAngle() < (Begheading + 180) % 360 - STOP_ERROR) {
+
+				while(odo.getAngle() > ((Begheading+180)%360+STOP_ERROR) || odo.getAngle() < ((Begheading+180)%360-STOP_ERROR)){
 					bangbang();
 				}
+				Sound.beep();
 				
 
 			}
@@ -98,27 +103,24 @@ public class DodgeObject extends Thread {
 	 * sensor is detecting.
 	 * 
 	 */
-	public void bangbang() {
+	private void bangbang(){
 		double distance = sideSensor.getValue();
-		double distError = BANDCENTER - distance;
-
-		if (Math.abs(distError) <= BANDWIDTH) { // Within limits, same speed
-			leftMotor.setSpeed(FORWARDSPEED);
-			leftMotor.setSpeed(FORWARDSPEED);
-			leftMotor.forward();
-			rightMotor.forward();
+		if(distance > 250){
+			distance = 250;
 		}
+		double distError = BANDCENTER - distance;//15- us.getvalue()
 
-		else if (distError > 0) { // Medium close to the wall, move away faster
-			leftMotor.setSpeed(FORWARDSPEED);
-			rightMotor.setSpeed(ROTATIONSPEED);
-			leftMotor.forward();
-			rightMotor.forward();
-		} else if (distError <= 0) { // Far from wall, move closer
-			leftMotor.setSpeed(ROTATIONSPEED);
-			rightMotor.setSpeed(FORWARDSPEED);
-			leftMotor.forward();
-			rightMotor.forward();
+		
+		if (Math.abs(distError) <= BANDWIDTH) { // Within limits, same speed
+			Sound.beep();
+			nav.setSpeeds(FORWARDSPEED, FORWARDSPEED);
+		}
+	
+		else if (distError >0) { // Medium close to the wall, move away faster	
+			nav.setSpeeds(FORWARDSPEED, ROTATIONSPEED);
+		}else{ //Far from wall, move closer
+			nav.setSpeeds(ROTATIONSPEED, FORWARDSPEED);
+
 		}
 	}
 

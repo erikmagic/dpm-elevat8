@@ -24,7 +24,7 @@ import lejos.utility.Delay;
  *
  *  
  */
-public class Initialization {
+public 	class Initialization {
 
 	// motors fields
 	private RegulatedMotor leftMotor = new EV3LargeRegulatedMotor(MotorPort.B);
