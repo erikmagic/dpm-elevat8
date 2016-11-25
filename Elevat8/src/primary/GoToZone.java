@@ -10,7 +10,7 @@ import lejos.robotics.RegulatedMotor;
 public class GoToZone extends Thread {
 	
 	// ----------------------- fields ----------------------------- //
-		private RegulatedMotor leftMotor, rightMotor;
+		private RegulatedMotor leftMotor, rightMotor, clawMotor, elevateMotor;
 		private Odometer odo;
 		private Navigation nav;
 		//be very careful when try to change the constants below
@@ -23,6 +23,9 @@ public class GoToZone extends Thread {
 		
 		private final double DEG_MIN_ERR = 3, DEG_MAX_ERR = 357, CM_ERR = 0.3, DEG_ERR = 10;
 		private static final double BANDCENTER = 15, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 35;
+		
+		private static final double MAPSIZE = 182.88; 
+
 
 		/**GoToZone constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 		 * @param leftMotor
@@ -36,11 +39,13 @@ public class GoToZone extends Thread {
 		 * @param frontSensor
 		 * @param heightSensor
 		 */
-		public GoToZone(RegulatedMotor leftMotor, RegulatedMotor rightMotor, Navigation nav, Odometer odo, int FORWARDSPEED
+		public GoToZone(RegulatedMotor leftMotor, RegulatedMotor rightMotor, RegulatedMotor clawMotor, RegulatedMotor elevateMotor, Navigation nav, Odometer odo, int FORWARDSPEED
 				, int ROTATIONSPEED, int ACCELERATION, USSensor sideSensor, USSensor frontSensor , USSensor heightSensor, double FinalX, double FinalY){
 			
 			this.leftMotor = leftMotor;
 			this.rightMotor = rightMotor;
+			this.clawMotor = clawMotor;
+			this.elevateMotor = elevateMotor;
 			this.odo = odo;
 			this.nav = nav;
 			this.frontSensor = frontSensor;
@@ -94,7 +99,11 @@ public class GoToZone extends Thread {
 						Sound.beep();
 						}
 					}
-					nav.setSpeeds(0, 0);
+					elevateMotor.rotate(-280);
+					clawMotor.rotate(-130);
+					
+					nav.travelTo(MAPSIZE/2,MAPSIZE/2);
+					activateSearchAndMove();
 				}
 			}
 		}

@@ -18,11 +18,11 @@ public class DodgeObject extends Thread {
 	private RegulatedMotor leftMotor, rightMotor;
 	private Odometer odo;
 	private Navigation nav;
-	private int ROTATIONSPEED = 92, FORWARDSPEED = 150, ACCELERATION;
+	private int ROTATIONSPEED = 92, FORWARDSPEED = 150, ACCELERATION, STOP = 0;
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop;
 	private static volatile boolean thread_on;
-	private static final double BANDCENTER = 15, BANDWIDTH = 3, STOP = 0, STOP_ERROR = 35;
+	private static final double BANDCENTER = 15, BANDWIDTH = 3, STOP_ERROR = 35;
 
 	/**
 	 * Dodge object constructor that allows most functionalities to the class (
@@ -85,8 +85,9 @@ public class DodgeObject extends Thread {
 				while(odo.getAngle() > ((Begheading+180)%360+STOP_ERROR) || odo.getAngle() < ((Begheading+180)%360-STOP_ERROR)){
 					bangbang();
 				}
+				nav.setSpeeds(STOP, STOP);
 				Sound.beep();
-				
+				activateSearchAndMove();
 
 			}
 		}
