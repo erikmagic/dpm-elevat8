@@ -16,7 +16,6 @@ public class Capture extends Thread {
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop, thread_on;
 	
-	
 	/** Capture constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)
 	 * @param leftMotor
 	 * @param rightMotor
@@ -41,6 +40,7 @@ public class Capture extends Thread {
 		this.nav = nav;
 		this.frontSensor = frontSensor;
 		this.sideSensor = sideSensor;
+		this.FORWARDSPEED = FORWARDSPEED;
 		complete_stop = false;
 		thread_on = true;
 	}
@@ -49,67 +49,59 @@ public class Capture extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run(){
-		
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e1) {
-
-		}
-		
+		leftMotor.setSpeed(60);
+		rightMotor.setSpeed(60);
+		nav.turnTo((odo.getAngle()+105)%360,true);
 		while(!complete_stop){
 			while(thread_on){
 				// algorithm
 				// describe how the capture works in the class comment
-				leftMotor.setSpeed(40);
-				rightMotor.setSpeed(40);
-				nav.turnTo((odo.getAngle()+90)%360,true);
 				frontD = frontSensor.getValue();
-//				while(frontD > 10){
-//					
+				System.out.println("Initial: "+frontD);
+				while(frontD > 5){					
 					leftMotor.setSpeed(FORWARDSPEED);
 					rightMotor.setSpeed(FORWARDSPEED);
 					leftMotor.forward();
 					rightMotor.forward();
 					try{
-						Thread.sleep(3000);
+						Thread.sleep(1000);
 					}catch(Exception e){
 						
 					}
 					frontD = frontSensor.getValue();
-//				}
-				//while(frontD > 3 && frontD < 15){
-					leftMotor.setSpeed(0);
-					rightMotor.setSpeed(0);
-					clawMotor.setSpeed(130);
-					clawMotor.rotate(180);
-					elevateMotor.rotate(270);
-					try{
-						Thread.sleep(1000);
-					}catch(Exception e){
+					System.out.println("Capture: "+frontD);
+					while(frontD > 3 && frontD < 9){
+						leftMotor.stop();
+						rightMotor.stop();
+						clawMotor.setSpeed(130);
+						clawMotor.rotate(130);
+						elevateMotor.rotate(280);
+						System.out.println("Elevate: "+frontSensor.getValue());
+						try{
+							Thread.sleep(1000);
+						}catch(Exception e){
+						}
+						if(frontSensor.getValue() > (2*frontD) ){
+							blockCount++;
+							break;
+						}
+						else{
+							clawMotor.rotate(-125);
+							elevateMotor.rotate(-280);
+							System.out.println("Capture incompleted. Let's try again!");
+							break;
+						}
 					}
-				
-						blockCount++;
-						//activateGoToZone();
-						//break;
-				
-					//else{
-												//clawMotor.rotate(-110);
-						//elevateMotor.rotate(-270);
-						//continue;
-						//clawMotor.rotate(110);
-						//nav.turnTo((odo.getAngle()+45)%360, false);
-						//nav.turnTo((odo.getAngle()-45)%360, false);
-						//clawMotor.rotate(-110);
-					//}
-				//}
-				
-				// test log the result and exit
-				Logger.log("capture worked");
-				System.exit(0);
-				
+					if(blockCount == 1){
+						System.out.println("capture worked");
+						activateGoToZone();
+						break;
+					}
+				}
 			}
 		}
 	}
+	
 	/**Pause the thread by deactivating the inner loop
 	 * 
 	 */
