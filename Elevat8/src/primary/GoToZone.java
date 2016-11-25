@@ -82,9 +82,7 @@ public class GoToZone extends Thread {
 							nav.turnBy(-80,true);
 						if(flag){
 							Begheading = odo.getAngle();
-							
-
-						flag = false;	
+							flag = false;	
 						}
 						
 							try{Thread.sleep(1500);}catch(Exception e){}
