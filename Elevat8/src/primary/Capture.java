@@ -41,6 +41,7 @@ public class Capture extends Thread {
 		this.frontSensor = frontSensor;
 		this.sideSensor = sideSensor;
 		this.FORWARDSPEED = FORWARDSPEED;
+		this.ROTATIONSPEED = ROTATIONSPEED;
 		complete_stop = false;
 		thread_on = true;
 	}
@@ -49,13 +50,33 @@ public class Capture extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	public void run(){
+		
+		double blockPosition[] = {-1, 255};
+		
+		//Initial turn for capture
 		leftMotor.setSpeed(60);
 		rightMotor.setSpeed(60);
-		nav.turnTo((odo.getAngle()+105)%360,true);
+		nav.turnTo(fixDegAngle(odo.getAngle()+105),true);
+		try{
+			Thread.sleep(1000);
+		} catch(Exception e){	
+		}
 		while(!complete_stop){
 			while(thread_on){
-				// algorithm
-				// describe how the capture works in the class comment
+				
+				//Scanning to place robot in optimal position for block capture
+				double middle = odo.getAngle(); 
+				double leftAngle = fixDegAngle(middle+45);
+				double rightAngle = fixDegAngle(middle-45);
+				nav.turnTo(rightAngle, true);
+				while(odo.getAngle()<leftAngle){
+					nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+					blockPosition = scanningDataProcessing(blockPosition);
+				}
+				
+				//Capture phase
+				
+				nav.turnTo(blockPosition[0], true);
 				frontD = frontSensor.getValue();
 				System.out.println("Initial: "+frontD);
 				while(frontD > 5){					
@@ -100,6 +121,26 @@ public class Capture extends Thread {
 				}
 			}
 		}
+	}
+	
+	private double fixDegAngle(double angle) {
+		if (angle < 0.0)
+			angle = 360 + (angle % (360));
+
+		return angle % (360);
+	}
+	
+	/**Scanner helper method: process the scanned data, check if there has been a closer object scanned and outputs the
+	 * position of previous object or new object
+	 * @param: position
+	 */
+	private double[] scanningDataProcessing(double[] position){
+		double newDist = frontSensor.getValue();
+		if (newDist< 15 && newDist<position[1]){
+				position[1] = newDist;
+				position[0] = odo.getAngle();
+		}
+		return position;
 	}
 	
 	/**Pause the thread by deactivating the inner loop
