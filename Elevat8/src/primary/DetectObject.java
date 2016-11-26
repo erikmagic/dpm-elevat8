@@ -84,7 +84,7 @@ public class DetectObject extends Thread {
 		//check if nav.turnBy(-100,true) 		
 				try{Thread.sleep(3000);}catch(Exception e){}
 				
-				if(sideSensor.getValue() < 30 && heightSensor.getValue()>30){
+				if(heightSensor.getValue()>15){
 					isBlueBlock = true;
 					counter++;
 					Sound.twoBeeps();

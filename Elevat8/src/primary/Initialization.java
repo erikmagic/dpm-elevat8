@@ -137,11 +137,11 @@ public 	class Initialization {
 
 //		getWIFI();
 		// initialize objects used troughout the code
-		//initializeObjects();
+		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
-		//startThreads();
+		startThreads();
 		
-		capture_test();
+		//capture_test();
 		
 		// localize the robot once everything has been set up before
 		//searchMove.start();

@@ -51,18 +51,19 @@ public class Capture extends Thread {
 	 */
 	public void run(){
 		
-		double blockPosition[] = {-1, 255};
 		
-		//Initial turn for capture
-		leftMotor.setSpeed(60);
-		rightMotor.setSpeed(60);
-		nav.turnTo(fixDegAngle(odo.getAngle()+105),true);
 		try{
 			Thread.sleep(1000);
 		} catch(Exception e){	
 		}
 		while(!complete_stop){
 			while(thread_on){
+				double blockPosition[] = {-1, 255};
+				
+				//Initial turn for capture
+				leftMotor.setSpeed(60);
+				rightMotor.setSpeed(60);
+				nav.turnTo(fixDegAngle(odo.getAngle()+105),true);
 				
 				//Scanning to place robot in optimal position for block capture
 				double middle = odo.getAngle(); 
