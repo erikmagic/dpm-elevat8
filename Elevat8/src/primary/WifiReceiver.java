@@ -19,7 +19,7 @@ import lejos.hardware.lcd.TextLCD;
 public class WifiReceiver {
 	
 
-	private static final String SERVER_IP = "192.168.2.14"; // will change on demo/competition day
+	private static final String SERVER_IP = "192.168.2.11"; // will change on demo/competition day
 	private static final int TEAM_NUMBER = 1;
 
 	private static TextLCD LCD = LocalEV3.get().getTextLCD();

@@ -18,9 +18,9 @@ public class SearchAndMove extends Thread {
 	private int  ROTATIONSPEED, FORWARDSPEED, ACCELERATION;
 	private USSensor sideSensor, frontSensor, heightSensor;
 	private static volatile boolean complete_stop, thread_on;
-	private static final double MAPSIZE = 182.88; 
+	private static final double MAPSIZE = 304.8; 
 	private static final float DISTANCE_TOLERANCE = 29;
-	private static final int DIVISION = 6, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 3, STOP = 0;
+	private static final int DIVISION = 10, SCAN_INTERVAL = 10, DIVISION_FORSCAN = 5, STOP = 0;
 	
 	
 	/**Search and move constructor that allows most functionalities to the class ( all motors and ultra sonic sensors access)

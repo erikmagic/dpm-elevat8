@@ -96,109 +96,109 @@ public class Localization {
 	public void localize() {
 		
 
-		// rotate the robot until it sees no wall
-		while (frontSensor.getValue() <= WALL_DISTANCE){				
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		// keep rotating until the robot sees a wall, then latch the angle
-		while (frontSensor.getValue() > WALL_DISTANCE){				
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		angleA = odo.getAngle();
-		
-		// switch direction and wait until it sees no wall
-		while (frontSensor.getValue() <= WALL_DISTANCE){
-			nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-		}
-		Sound.beep();
-		// keep rotating until the robot sees a wall, then latch the angle
-		while (frontSensor.getValue() > WALL_DISTANCE){
-			nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
-		}
-		Sound.beep();
-		nav.setSpeeds(STOP, STOP);
-		angleB = odo.getAngle();
-
-		// angleA is clockwise from angleB, so assume the average of the
-		// angles to the right of angleB is 45 degrees past 'north'
-		if (angleA>angleB){
-			pos[2] = 225.0 - (angleA-angleB)/2;
-		}
-		else {
-			pos[2] = 45.0 - (angleA-angleB)/2;
-		}
-		
-		// update the odometer position (example to follow:)
-		odo.setPosition(pos, new boolean [] {false, false, true});	
-		nav.turnTo(0, true) ; 
-				
-		// start the light localization
-		nav.turnTo(45, true); // turn 135 degrees to make it face to destination (furthest corner from wall of the tile)
-
-		leftMotor.setSpeed(FORWARDSPEED);
-		rightMotor.setSpeed(FORWARDSPEED);
-		
-		leftMotor.rotate(convertDistance(WHEELRADIUS,6),true);
-		rightMotor.rotate(convertDistance(WHEELRADIUS,6),false);
-		
-		// start rotating and clock all 4 gridlines
-		while (correctionSensor.getValue() > BLACKLINE){
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		double angleXn = odo.getAngle();
-		
-		while (correctionSensor.getValue() > BLACKLINE){
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		double angleYp = odo.getAngle();
-		
-		while (correctionSensor.getValue() > BLACKLINE){
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		double angleXp = odo.getAngle();
-		
-		while (correctionSensor.getValue() > BLACKLINE){
-			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
-		}
-		Sound.beep();
-		double angleYn = odo.getAngle();
-		nav.setSpeeds(STOP, STOP);
-
-		
-		// do trig to compute (0,0) and 0 degrees
-		double thetaY = angleYp-angleYn;
-		double thetaX = angleXn-angleXp;
-		double x = -COLORSENSOR_TO_CENTER_TRACK*Math.cos(Math.toRadians(thetaY)/2.0);
-		double y = -COLORSENSOR_TO_CENTER_TRACK*Math.cos(Math.toRadians(thetaX)/2.0);
-		double angleCorrY = -180+angleYn+thetaY/2.0;
-			
-		//update position
-		pos[0] = x;
-		pos[1] = y;
-		pos[2] = angleCorrY + odo.getAngle();
-		
-		// update the odometer position (example to follow:)
-		odo.setPosition(pos, new boolean [] {true, true, true});
-		nav.travelTo(0,0);
-		nav.turnTo(0, true);
-		Sound.twoBeeps();
-		Sound.twoBeeps();
-		Sound.twoBeeps();
-		
-	//TODO: activate when we activate wifi	
-//		int startingCorner;
-//		if ( Initialization.BTN == 1) startingCorner = Initialization.BSC;
-//		else { startingCorner = Initialization.CSC; }
-//		
-//		if ( startingCorner == 0){
-//			startingCorner = 5;
+//		// rotate the robot until it sees no wall
+//		while (frontSensor.getValue() <= WALL_DISTANCE){				
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
 //		}
-//		odo.setPosition(Initialization.initialPosition[startingCorner-1], new boolean[] {true, true, true});
+//		Sound.beep();
+//		// keep rotating until the robot sees a wall, then latch the angle
+//		while (frontSensor.getValue() > WALL_DISTANCE){				
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		angleA = odo.getAngle();
+//		
+//		// switch direction and wait until it sees no wall
+//		while (frontSensor.getValue() <= WALL_DISTANCE){
+//			nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		// keep rotating until the robot sees a wall, then latch the angle
+//		while (frontSensor.getValue() > WALL_DISTANCE){
+//			nav.setSpeeds(-ROTATIONSPEED, ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		nav.setSpeeds(STOP, STOP);
+//		angleB = odo.getAngle();
+//
+//		// angleA is clockwise from angleB, so assume the average of the
+//		// angles to the right of angleB is 45 degrees past 'north'
+//		if (angleA>angleB){
+//			pos[2] = 225.0 - (angleA-angleB)/2;
+//		}
+//		else {
+//			pos[2] = 45.0 - (angleA-angleB)/2;
+//		}
+//		
+//		// update the odometer position (example to follow:)
+//		odo.setPosition(pos, new boolean [] {false, false, true});	
+//		nav.turnTo(0, true) ; 
+//				
+//		// start the light localization
+//		nav.turnTo(45, true); // turn 135 degrees to make it face to destination (furthest corner from wall of the tile)
+//
+//		leftMotor.setSpeed(FORWARDSPEED);
+//		rightMotor.setSpeed(FORWARDSPEED);
+//		
+//		leftMotor.rotate(convertDistance(WHEELRADIUS,6),true);
+//		rightMotor.rotate(convertDistance(WHEELRADIUS,6),false);
+//		
+//		// start rotating and clock all 4 gridlines
+//		while (correctionSensor.getValue() > BLACKLINE){
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		double angleXn = odo.getAngle();
+//		
+//		while (correctionSensor.getValue() > BLACKLINE){
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		double angleYp = odo.getAngle();
+//		
+//		while (correctionSensor.getValue() > BLACKLINE){
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		double angleXp = odo.getAngle();
+//		
+//		while (correctionSensor.getValue() > BLACKLINE){
+//			nav.setSpeeds(ROTATIONSPEED, -ROTATIONSPEED);
+//		}
+//		Sound.beep();
+//		double angleYn = odo.getAngle();
+//		nav.setSpeeds(STOP, STOP);
+//
+//		
+//		// do trig to compute (0,0) and 0 degrees
+//		double thetaY = angleYp-angleYn;
+//		double thetaX = angleXn-angleXp;
+//		double x = -COLORSENSOR_TO_CENTER_TRACK*Math.cos(Math.toRadians(thetaY)/2.0);
+//		double y = -COLORSENSOR_TO_CENTER_TRACK*Math.cos(Math.toRadians(thetaX)/2.0);
+//		double angleCorrY = -180+angleYn+thetaY/2.0;
+//			
+//		//update position
+//		pos[0] = x;
+//		pos[1] = y;
+//		pos[2] = angleCorrY + odo.getAngle();
+//		
+//		// update the odometer position (example to follow:)
+//		odo.setPosition(pos, new boolean [] {true, true, true});
+//		nav.travelTo(0,0);
+//		nav.turnTo(0, true);
+//		Sound.twoBeeps();
+//		Sound.twoBeeps();
+//		Sound.twoBeeps();
+//		
+	//TODO: activate when we activate wifi	
+		int startingCorner;
+		if ( Initialization.BTN == 1) startingCorner = Initialization.BSC;
+		else { startingCorner = Initialization.CSC; }
+		
+		if ( startingCorner == 0){
+			startingCorner = 5;
+		}
+		odo.setPosition(Initialization.initialPosition[startingCorner-1], new boolean[] {true, true, true});
 
 		
 		// when localization is done, start Threads to start actually moving the

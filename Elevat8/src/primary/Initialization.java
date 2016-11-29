@@ -135,7 +135,7 @@ public 	class Initialization {
 	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
 
-//		getWIFI();
+		getWIFI();
 		// initialize objects used troughout the code
 		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
@@ -167,11 +167,11 @@ public 	class Initialization {
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
-/*	public void getWIFI() {
+	public void getWIFI() {
 		WifiReceiver receiver = new WifiReceiver();
 		receiver.initiateWifi();
 	}
-	*/
+	
 
 	/**
 	 * Starts the  ODOMETER, USSENSORS, COLORSENSORS AND DISPLAY
@@ -231,7 +231,7 @@ public void initializeObjects() throws FileNotFoundException {
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 
 			//the last two doubles is final coordinate (0,0)
-		gotozone = new GoToZone(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor, 60, 60);
+		gotozone = new GoToZone(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor, zone[0], zone[1]);
 		
 		loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, FORWARDSPEED, ROTATIONSPEED, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
 		//loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);

@@ -101,8 +101,6 @@ public class GoToZone extends Thread {
 					}
 					elevateMotor.rotate(-280);
 					clawMotor.rotate(-130);
-					
-					nav.travelTo(MAPSIZE/2,MAPSIZE/2);
 					activateSearchAndMove();
 				}
 			}
