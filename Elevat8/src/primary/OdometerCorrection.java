@@ -29,6 +29,7 @@ public class OdometerCorrection extends Thread {
 		this.odo = odo;
 		this.correctionSensor = correctionSensor;
 		
+		
 	}
 	
 	/* (non-Javadoc)

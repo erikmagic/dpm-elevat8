@@ -4,9 +4,8 @@ import org.freedesktop.dbus.test.profile.Log;
 
 import lejos.robotics.RegulatedMotor;
 
-/**
+/** * Navigation class that contains useful methods for controlling the motors attached to the wheels, or any motors.
  * @author Erik-Olivier Riendeau, 2016
- * Navigation class that contains useful methods for controlling the motors attached to the wheels.
  * 
  */
 public class Navigation {
@@ -90,22 +89,22 @@ public class Navigation {
 }
 	}
 	/**Go forwards for a certain distance in centimeters.
-	 * @param distance
+	 * @param distance in cm
 	 */
 	public void goForward(double distance) {
 		this.travelTo(Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}
 	
 	/**Go backwards for a certain distance in centimeters.
-	 * @param distance
+	 * @param distance in cm
 	 */
 	public void goBackwards(double distance){
 		this.travelTo(-Math.cos(this.odo.getAngle()) * distance, Math.sin(this.odo.getAngle()) * distance);
 	}
 	
 	/**Private helper method that set the speeds of the motors in rotation/s together.
-	 * @param lSpd
-	 * @param rSpd
+	 * @param lSpd in rotations/min
+	 * @param rSpd in rotations/min
 	 */
 	public void setSpeeds(int lSpd, int rSpd) {
 		this.leftMotor.setSpeed(lSpd);

@@ -51,7 +51,7 @@ public class Capture extends Thread {
 	 */
 	public void run(){
 		
-		
+		// the sleeper at the beginning is used in order to eliminate potential issues when starting the thread and pausing it immediately. 
 		try{
 			Thread.sleep(1000);
 		} catch(Exception e){	
@@ -76,10 +76,8 @@ public class Capture extends Thread {
 				}
 				
 				//Capture phase
-				
 				nav.turnTo(blockPosition[0], true);
-				frontD = frontSensor.getValue();
-				System.out.println("Initial: "+frontD);
+				frontD = (int) frontSensor.getValue();
 				while(frontD > 5){					
 					leftMotor.setSpeed(FORWARDSPEED);
 					rightMotor.setSpeed(FORWARDSPEED);
@@ -90,8 +88,7 @@ public class Capture extends Thread {
 					}catch(Exception e){
 						
 					}
-					frontD = frontSensor.getValue();
-					System.out.println("Capture: "+frontD);
+					frontD = (int) frontSensor.getValue();
 					while(frontD > 3 && frontD < 9){
 						leftMotor.stop();
 						rightMotor.stop();
@@ -124,6 +121,10 @@ public class Capture extends Thread {
 		}
 	}
 	
+	/**Helper method that converts an arbitary angle to an angle between 0 and 360 degrees.
+	 * @param any angle in degrees
+	 * @return the angle between 0 and 360 degrees
+	 */
 	private double fixDegAngle(double angle) {
 		if (angle < 0.0)
 			angle = 360 + (angle % (360));

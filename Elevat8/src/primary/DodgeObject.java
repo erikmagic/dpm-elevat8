@@ -4,12 +4,12 @@ import lejos.hardware.Sound;
 import lejos.robotics.RegulatedMotor;
 
 /**
- * This class dodges a wooden brick in most case by using the front and side
- * sensors. It might occur that the class dodges a styrofoam block if the robot
- * already holds enough blocks and is going back to its zone. This class use the
- * bang bang operatio to dodge blocks. zone.
- * 
- * @author Erik-Olivier Riendeau, 2016
+ * This class dodges an object by using the side sensor. The algorithm is a simple bang-bang algorithm.
+ * If the sensor detects the the object at a distance lower than the an arbitrary threshold, the robot
+ * gets further from the object. If the sensor detects the object at a distance farther than an
+ * arbitrary threshold, the robot gets closer to the object. The robot aims to stay at an arbitrary fixed
+ * distance from the object and to advance straight. 
+ * @author Erik-Olivier Riendeau, Dongwen Wang 2016
  *
  */
 public class DodgeObject extends Thread {
@@ -51,9 +51,6 @@ public class DodgeObject extends Thread {
 		this.sideSensor = sideSensor;
 		complete_stop = false;
 		thread_on = true;
-//		this.ROTATIONSPEED = ROTATIONSPEED;
-//		this.FORWARDSPEED = FORWARDSPEED;
-//		this.ACCELERATION = ACCELERATION;
 	}
 
 	/*
@@ -71,22 +68,12 @@ public class DodgeObject extends Thread {
 		
 		while (!complete_stop) {
 			while (thread_on) {
-				// algorithm
-				// MYCODE
-				// TODO: implement robustness with front sensor dodging
 				double Begheading = odo.getAngle();
 				// perform bangbang
-				
-//				// test, log the result and exit
-//				Logger.log("dodge object worked");
-//				System.exit(0);
-
-
 				while(odo.getAngle() > ((Begheading+180)%360+STOP_ERROR) || odo.getAngle() < ((Begheading+180)%360-STOP_ERROR)){
 					bangbang();
 				}
 				nav.setSpeeds(STOP, STOP);
-				Sound.beep();
 				activateSearchAndMove();
 
 			}

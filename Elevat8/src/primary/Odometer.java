@@ -13,12 +13,13 @@ public class Odometer extends Thread {
 	private boolean always_on;
 	private RegulatedMotor rightMotor, leftMotor;
 	private double trackSize, wheelRadius;
+	private OdometerCorrection odoCorr;
 	private Object lock;
 	private double positionX = 0, positionY = 0, theta = 0, nowTachoL = 0, nowTachoR = 0, previousTachoL = 0, previousTachoR = 0;
 	private long updateStart, updateEnd;
 	private double displacementLeft, displacementRight, displacement, changeDirection, dX, dY;
 	// odometer update period, in ms
-		private static final long ODOMETER_PERIOD = 25;
+	private static final long ODOMETER_PERIOD = 25;
 	
 	/**Odometer constructor
 	 * 
@@ -34,7 +35,6 @@ public class Odometer extends Thread {
 		this.leftMotor = leftMotor;
 		this.trackSize = trackSize;
 		this.wheelRadius = wheelRadius;
-		
 	}
 	
 	/* (non-Javadoc)
@@ -42,7 +42,6 @@ public class Odometer extends Thread {
 	 */
 	public void run(){
 		while(always_on){
-			// TODO implementation of the odometer
 			
 			// reset the motor tacho meter
 			leftMotor.resetTachoCount();
@@ -50,14 +49,7 @@ public class Odometer extends Thread {
 
 			while (true) {
 				updateStart = System.currentTimeMillis();
-				// put (some of) your odometer code here
-				
-				
-				
-				//System.out.println("left tacho value is " + leftMotor.getTachoCount() +" right tacho value is " 
-				//		+ rightMotor.getTachoCount());
-				
-				// measure the progression of each motor
+
 				nowTachoL = leftMotor.getTachoCount();
 				nowTachoR = rightMotor.getTachoCount();
 				
@@ -91,7 +83,6 @@ public class Odometer extends Thread {
 					// makes sure that theta is between 0 and 2pi
 					theta = fixDegAngle(theta);
 					
-					// switch default role to
 					
 					// add the displacement to the last position
 					positionX += dX;
@@ -165,19 +156,6 @@ public class Odometer extends Thread {
 			return new double[] { positionX, positionY, theta * 180/Math.PI };
 		}
 	}
-	//FOR TESTING
-	public double getTrack(){
-		synchronized(this){
-			return trackSize;
-		}
-	}
-	
-	public void setTrack (double added){
-		synchronized(this){
-			trackSize += added;
-		}
-	}
-//TESTING END
 	
 	/**
 	 * @param x - set the position on the x axis in cm

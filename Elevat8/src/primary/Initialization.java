@@ -39,12 +39,13 @@ public 	class Initialization {
 	private Port s2 = brick.getPort("S2");
 	private Port s1 = brick.getPort("S1");
 	
-	//EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3); to be added if
-	// we get more ports
+	
 	private EV3ColorSensor colorSensor = new EV3ColorSensor(s4);
 	private EV3UltrasonicSensor usSide = new EV3UltrasonicSensor(s2);//bottom
 	private EV3UltrasonicSensor usDetectObject = new EV3UltrasonicSensor(s3);//top
 	private EV3UltrasonicSensor usFront =  new EV3UltrasonicSensor(s1);
+	//EV3ColorSensor colorSensorLeft = new EV3ColorSensor(s3); to be added if
+	// we get more ports
 	// https://sourceforge.net/p/lejos/wiki/Remote%20access%20to%20an%20EV3/
 	// https://lejosnews.wordpress.com/2015/02/11/pan-configuration/ to add a
 	// sensor from another brick
@@ -61,7 +62,9 @@ public 	class Initialization {
 	
 	// odometer fields
 	private Odometer odo;
-	private OdometerCorrection odoCorrection;
+	private OdometerCorrection odoCorr;
+	
+	// screen
 	private LCDInfo lcd;
 	
 	// localization fields
@@ -134,36 +137,15 @@ public 	class Initialization {
 	 */
 	public void initialize() throws FileNotFoundException{
 		// start by getting wifi info to fetch needed parameters for object initializations
-
 		getWIFI();
-		// initialize objects used troughout the code
+		// initialize objects used throughout the code
 		initializeObjects();
 		// start urgent threads, after initialize objects because some of these threads are objects
 		startThreads();
-		
-		//capture_test();
-		
 		// localize the robot once everything has been set up before
-		//searchMove.start();
-		//loc.localize();
-		//nav.turnTo(90,true);
 		loc.localize();
-		//detectObject.run();
-		//System.exit(0);
 	}
-	
 
-	public void localization_test() throws FileNotFoundException{
-		initializeObjects();
-		startThreads();
-		loc.localize();
-	}
-	
-	public void capture_test() throws FileNotFoundException{
-		initializeObjects();
-		startThreads();
-		capture.run();
-	}
 	/**
 	 * Creates a WIFI object and accesses the object to fetch needed information
 	 */
@@ -191,19 +173,11 @@ public 	class Initialization {
 public void initializeObjects() throws FileNotFoundException {
 
 		
-
+		// set up logger
 		Logger.setLogWriter("sensor_data.txt");
-
-		 // set up logger
-
 		//custom_timer = new CustomTimer(timer, deadline); // initialize timer object
-
 		odo = new Odometer(leftMotor, rightMotor, TRACKSIZE, WHEELRADIUS);
-
-		//Odometer odo = new Odometer(leftMotor, rightMotor, 30, true);
-
-
-
+		
 		lcd = new LCDInfo(odo);
 
 		sideSensor = new USSensor(usSide);
@@ -214,13 +188,9 @@ public void initializeObjects() throws FileNotFoundException {
 
 		correctionSensor = new ColorSensor(colorSensor);
 
-		//odoCorrection = new OdometerCorrection(odo, correctionSensor);
-
-		//nav = new Navigation(odo);
+		odoCorr = new OdometerCorrection(odo, correctionSensor);
 
 		nav = new Navigation(leftMotor, rightMotor, odo, ROTATIONSPEED, FORWARDSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE);
-		//dodgeObject = new DodgeObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
-		//detectObject = new DetectObject(leftMotor, rightMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 
 		capture = new Capture(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor);
 
@@ -230,47 +200,11 @@ public void initializeObjects() throws FileNotFoundException {
 
 		searchMove = new SearchAndMove(leftMotor, rightMotor, nav, odo, ACCELERATION, FORWARDSPEED, ROTATIONSPEED, sideSensor, frontSensor, heightSensor);
 
-			//the last two doubles is final coordinate (0,0)
+		//the last two doubles is final coordinate (0,0)
 		gotozone = new GoToZone(leftMotor, rightMotor, clawMotor, elevateMotor, nav, odo, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, sideSensor, frontSensor, heightSensor, zone[0], zone[1]);
 		
 		loc = new Localization(leftMotor, rightMotor, odo, nav, searchMove, detectObject, capture, gotozone, dodgeObject, FORWARDSPEED, ROTATIONSPEED, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
-		//loc = new Localization(leftMotor, rightMotor, odo, nav, FORWARDSPEED, ROTATIONSPEED, ACCELERATION, WHEELRADIUS, TRACKSIZE, frontSensor, correctionSensor);
-
-	}
-
-	public void gotozone_test() throws FileNotFoundException{
-		initializeObjects();
-		startThreads();
-		gotozone.start();
 	
-	}
-	public void detection_test() throws FileNotFoundException{
-		initializeObjects();
-		startThreads();
-		detectObject.start();
-	}
-	public void isolation_test() throws FileNotFoundException{
-		initializeObjects();
-		startThreads();
-//		nav.turnTo(180, true);
-//		nav.turnTo(360, true);
-		//TODO: PLEASE DO NOT REMOVE THIS CODE, might be useful later
-		while(true){
-			buttonChoice = Button.waitForAnyPress();
-			while (buttonChoice != Button.ID_LEFT
-				&& buttonChoice != Button.ID_RIGHT);
-			if (buttonChoice == Button.ID_LEFT){
-				odo.setTrack(0.1);
-			}
-			else if (buttonChoice == Button.ID_RIGHT){
-				odo.setTrack(-0.1);
-			}
-			nav.turnTo(90, true);
-			Button.waitForAnyPress();
-			nav.turnTo(0, true);
-		}
-//		nav.turnTo(270, true);
-//		nav.turnTo(0, true);
-		//System.exit(0);
+
 	}
 }

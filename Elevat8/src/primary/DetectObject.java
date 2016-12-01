@@ -63,10 +63,7 @@ public class DetectObject extends Thread {
 		while(!complete_stop){
 			while(thread_on){
 				int counter = 0;
-				// algorithm
-				// TODO
-		//move robot forward to a block till the front distance less than certain distance 
-//				try{Thread.sleep(3000);}catch(Exception e){}
+				//move robot forward to a block till the front distance less than certain distance 
 				
 				while(frontSensor.getValue() > 15){
 					leftMotor.setSpeed(FORWARDSPEED);
@@ -77,11 +74,9 @@ public class DetectObject extends Thread {
 				}
 				leftMotor.stop();
 				rightMotor.stop();
-//				try{Thread.sleep(3000);}catch(Exception e){}
-		//turn the robot cw 90 degrees in order to use side sensors to identify the type of block	
+				//turn the robot cw 90 degrees in order to use side sensors to identify the type of block	
 				nav.turnBy(-120,true);
 				
-		//check if nav.turnBy(-100,true) 		
 				try{Thread.sleep(3000);}catch(Exception e){}
 				
 				if(heightSensor.getValue()>15){
@@ -109,7 +104,6 @@ public class DetectObject extends Thread {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				

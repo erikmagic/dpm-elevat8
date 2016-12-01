@@ -4,7 +4,7 @@ import lejos.hardware.Sound;
 import lejos.robotics.RegulatedMotor;
 
 /**This thread assumes the robot is holding a block and only has to go to the appropriate zone. After the robot deposits the block in the correct zone, the thread ends and SearchAndMove is resumed.
- * @author Erik-Olivier Riendeau, 2016
+ * @author Erik-Olivier Riendeau, Qingzhou Yang 2016
  *
  */
 public class GoToZone extends Thread {
