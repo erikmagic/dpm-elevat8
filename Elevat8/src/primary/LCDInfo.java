@@ -5,7 +5,8 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.utility.Timer;
 import lejos.utility.TimerListener;
 
-/**
+/**Prints the value reported by the odometer on the EV3's LCD screen. Can also 
+ * be used for debugging by printing all sorts of variables in real time.
  * @author Ken
  *
  */
@@ -35,6 +36,7 @@ public class LCDInfo implements TimerListener{
 		LCD.drawString("X: ", 0, 0);
 		LCD.drawString("Y: ", 0, 1);
 		LCD.drawString("H: ", 0, 2);
+		LCD.drawString("T: ", 0, 3);
 		LCD.drawInt((int)(pos[0] ), 3, 0);
 		LCD.drawInt((int)(pos[1] ), 3, 1);
 		LCD.drawInt((int)pos[2], 3, 2);

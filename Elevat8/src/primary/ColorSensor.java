@@ -6,7 +6,7 @@ import lejos.hardware.ev3.EV3;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 
-/**Color Sensor that uses the redMode to detect black lines on the ground
+/**Color Sensor that uses the redMode to detect black lines on the ground. Multiplies the value received by 100. The output is between 0 and 100.
  * @author Erik-Olivier Riendeau, 2016
  *
  */
@@ -17,7 +17,7 @@ public class ColorSensor extends Thread {
 	private Object lock;
 	float[] sensorData;
 	private EV3ColorSensor colorSensor;
-	SampleProvider redMode;
+	private SampleProvider redMode;
 	private int sensorSize, value;
 	
 	
@@ -31,6 +31,7 @@ public class ColorSensor extends Thread {
 		redMode = colorSensor.getRedMode();
 		sensorSize = redMode.sampleSize();
 		sensorData = new float[sensorSize];
+		lock = new Object();
 	}
 	
 	
@@ -44,20 +45,7 @@ public class ColorSensor extends Thread {
 		}
 	}
 	
-	
-	
-	/**
-	 * @param list
-	 * @param index
-	 * @return
-	 */
-	public int filter(ArrayList<Integer> list, int index) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	
-	/**return the value detected by the sensor
+	/**Returns the value detected by the sensor, between 0 and 100 where 0 is pure black and 100 is pure white. 
 	 * @return value detected
 	 */
 	public int getValue() {

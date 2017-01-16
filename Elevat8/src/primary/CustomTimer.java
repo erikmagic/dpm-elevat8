@@ -6,7 +6,7 @@ import java.util.TimerTask;
 import lejos.hardware.Sound;
 
 /**
- * Timer Thread class that starts a timer and ends all Thread after a certain time limit
+ * Timer Thread class that starts a timer and ends all Thread after a certain time limit.
  * @author Erik-Olivier Riendeau, 2016
  * 
  */
